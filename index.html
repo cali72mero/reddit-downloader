@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🐦 CleanReddit GOLD v5.3 BETA Dashboard</title>
+    <title>🐦 CleanReddit v0.1 BETA Dashboard</title>
     <style>
         :root { --primary: #ffd700; --bg: #060606; --surface: #121212; --text: #efefef; --accent: #00ff88; }
         body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, sans-serif; background: var(--bg); color: var(--text); padding: 20px; max-width: 1240px; margin: 0 auto; }
@@ -112,8 +112,8 @@
     </div>
 
     <div class="mode-switch">
-        <button id="basicModeBtn" class="mode-btn" onclick="setUIMode('basic')">v5.2 benutzen (Anfänger-Modus)</button>
-        <button id="proModeBtn" class="mode-btn active" onclick="setUIMode('pro')">v5.3 Pro-Modus</button>
+        <button id="basicModeBtn" class="mode-btn" onclick="setUIMode('basic')">Nobby-Modus (Einfach)</button>
+        <button id="proModeBtn" class="mode-btn active" onclick="setUIMode('pro')">Pro-Modus (Erweitert)</button>
         <span id="modeLabel" class="mode-label">Aktiv: Pro-Modus</span>
         <div class="lang-wrap">
             <label id="langLabel" for="languageSelect">Sprache</label>
@@ -125,7 +125,7 @@
     </div>
 
     <div id="settingsSection" class="settings-box">
-        <h3 id="settingsTitle">⚙️ Einstellungen & Sicherheit (v5.3 BETA) <span class="new-badge">NEW</span></h3>
+        <h3 id="settingsTitle">⚙️ Einstellungen & Sicherheit (v0.1 BETA) <span class="new-badge">NEW</span></h3>
 
         <div class="info-box">
             <h4 id="infoCacheTitle">🗑️ Cache korrekt leeren</h4>
@@ -171,7 +171,7 @@
                 <label for="rateLimit">Rate Limit Schutz aktiv</label>
             </div>
             <div class="setting-item pro-only">
-                <label for="maxTweetsBeforePause">Pause nach Tweets:</label>
+                <label for="maxTweetsBeforePause">Pause nach Posts:</label>
                 <input type="number" id="maxTweetsBeforePause" min="1" max="100000" value="45" onchange="saveSettings()">
                 <label for="pauseDurationMs">Pause (ms):</label>
                 <input type="number" id="pauseDurationMs" min="0" max="86400000" value="30000" onchange="saveSettings()">
@@ -187,7 +187,7 @@
                 <label for="pauseOnHiddenTab">Scans pausieren, wenn Tab im Hintergrund ist</label>
             </div>
             <div class="setting-item pro-only">
-                <label for="maxTweetsPerScan">Max Tweets pro Scan:</label>
+                <label for="maxTweetsPerScan">Max Posts pro Scan:</label>
                 <input type="number" id="maxTweetsPerScan" min="1" max="5000" value="35" onchange="saveSettings()">
                 <span class="subtle">Niedriger = unauffälliger + weniger CPU</span>
             </div>
@@ -241,7 +241,7 @@
             <div class="setting-item">
                 <input type="checkbox" id="trimCache" onchange="saveSettings()" checked>
                 <label for="trimCache">Cache automatisch begrenzen</label>
-                <label for="maxCacheTweets">Max Tweets im Cache:</label>
+                <label for="maxCacheTweets">Max Posts im Cache:</label>
                 <input type="number" id="maxCacheTweets" min="1" max="2000000" value="8000" onchange="saveSettings()">
             </div>
             <div class="setting-item">
@@ -249,7 +249,7 @@
                 <label for="enableRenderLimit">Render-Limit aktiv</label>
                 <label for="renderLimit">Dashboard Render-Limit:</label>
                 <input type="number" id="renderLimit" min="1" max="100000" value="350" onchange="saveSettings()">
-                <span class="subtle">Nur letzte N Tweets werden gezeichnet (für flüssige UI)</span>
+                <span class="subtle">Nur letzte N Posts werden gezeichnet (für flüssige UI)</span>
             </div>
             <div class="setting-item">
                 <input type="checkbox" id="enableZipThrottle" onchange="saveSettings()" checked>
@@ -295,11 +295,11 @@
     </div>
 
     <div id="installSection" class="generator-box">
-        <h1 id="installTitle">⚠️ CleanReddit v5.3 BETA</h1>
-        <a id="bookmarkletBtn" class="btn btn-drag" href="javascript:void(0);" draggable="true">⚠️ CleanReddit v5.3 BETA</a>
+        <h1 id="installTitle">⚠️ CleanReddit v0.1 BETA</h1>
+        <a id="bookmarkletBtn" class="btn btn-drag" href="javascript:void(0);" draggable="true">⚠️ CleanReddit v0.1 BETA</a>
         <br><br>
         <button id="btnCopyCode" class="btn btn-soft" onclick="copyCode()">📋 Code kopieren</button>
-        <button id="btnLiveApply" class="btn btn-soft" onclick="applyRuntimeConfigLive()">⚡ Live auf X anwenden</button>
+        <button id="btnLiveApply" class="btn btn-soft" onclick="applyRuntimeConfigLive()">⚡ Live auf Reddit anwenden</button>
         <button id="btnRuntimeOn" class="btn btn-soft" onclick="startRuntimeLive()">▶️ Runtime starten</button>
         <button id="btnRuntimeOff" class="btn btn-soft" onclick="stopRuntimeLive()">🛑 Runtime stoppen</button>
         <button id="btnRuntimeResume" class="btn btn-soft" onclick="resumeRuntimeLive()">⏭️ Pause lösen</button>
@@ -319,7 +319,7 @@
             <div class="monitor-item"><div id="monLblLastScan" class="monitor-label">Letzter Scan</div><div id="monLastScan" class="monitor-value">-</div></div>
             <div class="monitor-item"><div id="monLblNextDelay" class="monitor-label">Next Delay</div><div id="monNextDelay" class="monitor-value">-</div></div>
             <div class="monitor-item"><div id="monLblAutoTune" class="monitor-label">Auto-Tune</div><div id="monTune" class="monitor-value">-</div></div>
-            <div class="monitor-item"><div id="monLblAdded" class="monitor-label">Neue Tweets</div><div id="monAdded" class="monitor-value">0</div></div>
+            <div class="monitor-item"><div id="monLblAdded" class="monitor-label">Neue Posts</div><div id="monAdded" class="monitor-value">0</div></div>
             <div class="monitor-item"><div id="monLblDupes" class="monitor-label">Duplikate entfernt</div><div id="monDupes" class="monitor-value">0</div></div>
             <div class="monitor-item"><div id="monLblWrites" class="monitor-label">Cache Writes</div><div id="monWrites" class="monitor-value">0</div></div>
             <div class="monitor-item"><div id="monLblStatus" class="monitor-label">Status</div><div id="monStatus" class="monitor-value">Idle</div></div>
@@ -327,9 +327,9 @@
     </div>
 
     <div id="viewerSection">
-        <h2 id="viewerTitle">📦 Gespeicherte Tweets</h2>
+        <h2 id="viewerTitle">📦 Gespeicherte Posts</h2>
         <div class="stats">
-            <div class="stat-item">📦 <span id="countDisplay">0</span> <span id="statTweetsLabel">Tweets</span></div>
+            <div class="stat-item">📦 <span id="countDisplay">0</span> <span id="statTweetsLabel">Posts</span></div>
             <div class="stat-item">👁️ <span id="renderedCount">0</span> <span id="statShownLabel">angezeigt</span></div>
             <div class="stat-item">🖼️ <span id="imgCount">0</span> <span id="statImagesLabel">Bilder</span></div>
             <div class="stat-item">🎥 <span id="vidCount">0</span> <span id="statVideosLabel">Videos</span></div>
@@ -355,7 +355,7 @@
 
     <div id="helpMenu" class="help-menu" onclick="closeHelpMenu(event)">
         <div class="help-card">
-            <h3>📘 v5.3 Hilfe-Menü: Sicher Einstellen</h3>
+            <h3>📘 v0.1 Hilfe-Menü: Sicher Einstellen</h3>
             <p class="subtle">Einfaches Ziel: langsam, menschlich, stabil. Diese Anleitung ist für Einsteiger gedacht.</p>
 
             <div class="help-grid">
@@ -363,15 +363,15 @@
                     <h4>1) Sicherer Start</h4>
                     <p>1. Stealth: AN</p>
                     <p>2. Min/Max Scan: 2200 bis 6500 ms</p>
-                    <p>3. Rate Limit: AN, 45 Tweets, 30000 ms Pause</p>
+                    <p>3. Rate Limit: AN, 45 Posts, 30000 ms Pause</p>
                     <p>4. Human Break: AN, 8%</p>
                     <p>5. Hidden Tab Pause: AN</p>
-                    <p>6. Max Tweets/Scan: 35</p>
+                    <p>6. Max Posts/Scan: 35</p>
                 </div>
                 <div class="help-box">
                     <h4>2) Nicht zu aggressiv werden</h4>
                     <p class="risk">Min Scan unter 1500 ms = auffälliger</p>
-                    <p class="risk">Max Tweets/Scan über 80 = hohe Last</p>
+                    <p class="risk">Max Posts/Scan über 80 = hohe Last</p>
                     <p class="risk">Rate Limit aus bei Dauerlauf = mehr Risiko</p>
                     <p class="risk">ScrollSpeed über 120 = unzuverlässiges Laden</p>
                 </div>
@@ -397,12 +397,12 @@
                     <tr><td>Stealth Mode</td><td>Zufällige Scan-Timings statt fester Taktung</td><td class="safe">AN</td><td class="risk">AUS bei Langlauf</td></tr>
                     <tr><td>Min Scan Delay</td><td>Kürzester Abstand zwischen Scans</td><td class="safe">2000-3500</td><td class="risk">&lt;1500</td></tr>
                     <tr><td>Max Scan Delay</td><td>Längster Abstand zwischen Scans</td><td class="safe">5000-9000</td><td class="risk">zu nah an Min</td></tr>
-                    <tr><td>Rate Limit + Pause</td><td>Zwangspause nach X Tweets</td><td class="safe">35-60 / 20000-45000</td><td class="risk">ausgeschaltet</td></tr>
+                    <tr><td>Rate Limit + Pause</td><td>Zwangspause nach X Posts</td><td class="safe">35-60 / 20000-45000</td><td class="risk">ausgeschaltet</td></tr>
                     <tr><td>Human Break</td><td>Zufällige Zusatzpause</td><td class="safe">AN, 5-12%</td><td class="risk">&gt;25% (zu langsam)</td></tr>
                     <tr><td>Pause on Hidden Tab</td><td>Stoppt Scans im Hintergrund-Tab</td><td class="safe">AN</td><td class="risk">AUS im Dauerbetrieb</td></tr>
                     <tr><td>Smart Auto-Tuning</td><td>Passt Scan-Tempo dynamisch an</td><td class="safe">Optional AN (Stärke 2-3)</td><td class="risk">Stärke 5 bei schwachen PCs</td></tr>
                     <tr><td>Dedupe Engine 2.0</td><td>Erkennt Duplikate mit Text+Media Fingerprint</td><td class="safe">AN</td><td class="risk">AUS bei großen Caches</td></tr>
-                    <tr><td>Max Tweets per Scan</td><td>Wie viele Tweets pro Scan geprüft werden</td><td class="safe">20-45</td><td class="risk">&gt;80</td></tr>
+                    <tr><td>Max Posts per Scan</td><td>Wie viele Tweets pro Scan geprüft werden</td><td class="safe">20-45</td><td class="risk">&gt;80</td></tr>
                     <tr><td>Scroll Speed</td><td>Auto-Scroll Geschwindigkeit</td><td class="safe">20-60</td><td class="risk">&gt;120</td></tr>
                     <tr><td>Trim Cache + Max Cache</td><td>Begrenzt Speicherwachstum</td><td class="safe">AN, 5000-10000</td><td class="risk">AUS bei langen Sessions</td></tr>
                     <tr><td>Render Limit</td><td>Wieviele Karten im Dashboard gezeichnet werden</td><td class="safe">AN + 200-600 oder AUS für alle</td><td class="risk">&gt;1500 auf schwachen PCs</td></tr>
@@ -431,7 +431,7 @@
                     <tr><td>Smart Auto-Tuning</td><td>Optional AN</td><td>AUS, wenn du feste manuelle Werte bevorzugst</td></tr>
                     <tr><td>Duplicate-Engine 2.0</td><td class="safe">AN</td><td>AUS nur bei speziellen Debug-Fällen</td></tr>
                     <tr><td>Cache automatisch begrenzen</td><td class="safe">AN</td><td>AUS nur wenn du absichtlich unbegrenzt sammeln willst</td></tr>
-                    <tr><td>Render-Limit aktiv</td><td class="safe">AN auf schwachen PCs</td><td>AUS wenn du alle Tweets gleichzeitig sehen willst</td></tr>
+                    <tr><td>Render-Limit aktiv</td><td class="safe">AN auf schwachen PCs</td><td>AUS wenn du alle Posts gleichzeitig sehen willst</td></tr>
                     <tr><td>ZIP Throttle aktiv</td><td class="safe">AN auf schwachen PCs</td><td>AUS wenn du maximal schnell exportieren willst</td></tr>
                     <tr><td>Export Pro aktiv</td><td>Optional</td><td>AUS für einfachen Standard-ZIP</td></tr>
                     <tr><td>Export nach User/Datum strukturieren</td><td class="safe">AN (wenn Export Pro AN)</td><td>AUS wenn du nur einen flachen Ordner willst</td></tr>
@@ -462,7 +462,7 @@
             <div class="help-grid" style="margin-top: 8px;">
                 <div class="help-box">
                     <h4>Welche Auswahl für welchen Anwendungsfall?</h4>
-                    <p>1. Normaler Gebrauch (1k bis 20k Tweets): <strong>Auto</strong></p>
+                    <p>1. Normaler Gebrauch (1k bis 20k Posts): <strong>Auto</strong></p>
                     <p>2. Sehr große Archive / Dauerlauf: <strong>IndexedDB bevorzugen</strong></p>
                     <p>3. Alter Browser / Kompatibilitäts-Test: <strong>Nur localStorage</strong></p>
                 </div>
@@ -483,7 +483,7 @@
                 </div>
                 <div class="help-box">
                     <h4>Wichtiger Ablauf</h4>
-                    <p>1. Oben Modus wählen (v5.2 Anfänger oder v5.3 Pro)</p>
+                    <p>1. Oben Modus wählen (Nobby oder Pro)</p>
                     <p>2. Werte ändern</p>
                     <p>3. Bookmarklet neu in Leiste ziehen</p>
                     <p>4. Reddit-Tab neu laden</p>
@@ -500,9 +500,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script>
         const CACHE_KEY = 'rd_clean_cache';
-        const DELETED_POSTS_KEY = 'rd_deleted_posts_v53';
-        const VIEW_FILTER_KEY = 'rd_view_filter_v53';
-        const SETTINGS_KEY = 'rd_settings_v53';
+        const DELETED_POSTS_KEY = 'rd_deleted_posts_v01';
+        const VIEW_FILTER_KEY = 'rd_view_filter_v01';
+        const SETTINGS_KEY = 'rd_settings_v01';
         const DASHBOARD_URL = (() => {
             try {
                 const u = new URL(window.location.href);
@@ -512,7 +512,7 @@
                 return window.location.href;
             }
         })();
-        const IDB_DB_NAME = 'rd_v53_cache_db';
+        const IDB_DB_NAME = 'rd_v01_cache_db';
         const IDB_STORE_NAME = 'kv';
         const IDB_VALUE_KEY = CACHE_KEY;
         const I18N = {
@@ -522,19 +522,19 @@
                 navInstall: '🔖 Bookmarklet',
                 navMonitor: '🛰️ Monitor',
                 navViewer: '📦 Viewer',
-                basicBtn: 'v5.2 benutzen (Anfänger-Modus)',
-                proBtn: 'v5.3 Pro-Modus',
-                modeBasic: 'Aktiv: Anfänger-Modus (v5.2-Stil)',
-                modePro: 'Aktiv: Pro-Modus (v5.3)',
+                basicBtn: 'Nobby-Modus (Einfach)',
+                proBtn: 'Pro-Modus (Erweitert)',
+                modeBasic: 'Aktiv: Nobby-Modus (Einfach)',
+                modePro: 'Aktiv: Pro-Modus (v0.1)',
                 monitorOn: 'Monitor AN',
                 monitorOff: 'Monitor AUS',
                 monitorStatusIdle: 'Leerlauf',
                 monitorStatusReady: 'Bereit',
                 monitorStatusLoading: 'Cache geladen',
                 monitorStatusDedupe: 'Cache dedupliziert',
-                monitorStatusImportNone: 'Import ohne neue Tweets',
-                renderHintOff: 'Render-Limit ist AUS: alle Tweets werden angezeigt.',
-                importAdded: (n) => `✅ ${n} neue Tweets importiert`,
+                monitorStatusImportNone: 'Import ohne neue Posts',
+                renderHintOff: 'Render-Limit ist AUS: alle Posts werden angezeigt.',
+                importAdded: (n) => `✅ ${n} neue Posts importiert`,
                 alertCodeCopied: '✅ Code kopiert!',
                 alertSettingsImported: '✅ Settings importiert',
                 alertInvalidJson: '❌ Ungültige JSON-Datei',
@@ -542,7 +542,7 @@
                 alertDedupeDone: (n) => `✅ Dedupe fertig: ${n} Duplikate entfernt`,
                 alertCacheEmpty: 'Cache ist leer!',
                 alertZipSuccess: '✅ ZIP-Download erfolgreich!',
-                confirmClearCache: 'Wirklich alle gespeicherten Tweets löschen?\n\nTipp: Vorher ZIP exportieren.',
+                confirmClearCache: 'Wirklich alle gespeicherten Posts löschen?\n\nTipp: Vorher ZIP exportieren.',
                 manualCopyCode: 'Code manuell kopieren:',
                 guideCopied: '✅ Anleitung kopiert!',
                 manualCopyGuide: 'Anleitung manuell kopieren:',
@@ -555,7 +555,7 @@
                 zipEtaLine: (eta, p, f) => `Restzeit ca. ${eta} • Parallel x${p}${f > 0 ? ` • Fehler ${f}` : ''}`,
                 zipFinalizing: 'Packe ZIP zusammen...',
                 alertZipPartial: (ok, fail) => `⚠️ ZIP fertig, aber ${fail} Dateien konnten nicht geladen werden. Erfolgreich: ${ok}`,
-                bookmarkletStarted: '⚠️ CleanReddit v5.3 BETA BIG gestartet',
+                bookmarkletStarted: '⚠️ CleanReddit v0.1 BETA BIG gestartet',
                 cacheLoaded: 'Cache geladen',
                 importPlus: (n) => `Import +${n}`,
                 confirmDeletePost: 'Diesen Post wirklich löschen und vom ZIP-Export ausschließen?',
@@ -572,19 +572,19 @@
                 navInstall: '🔖 Bookmarklet',
                 navMonitor: '🛰️ Monitor',
                 navViewer: '📦 Viewer',
-                basicBtn: 'Use v5.2 (Beginner mode)',
-                proBtn: 'v5.3 Pro mode',
-                modeBasic: 'Active: Beginner mode (v5.2 style)',
-                modePro: 'Active: Pro mode (v5.3)',
+                basicBtn: 'Nobby mode (Simple)',
+                proBtn: 'Pro mode (Advanced)',
+                modeBasic: 'Active: Nobby mode (Simple)',
+                modePro: 'Active: Pro mode (v0.1)',
                 monitorOn: 'Monitor ON',
                 monitorOff: 'Monitor OFF',
                 monitorStatusIdle: 'Idle',
                 monitorStatusReady: 'Ready',
                 monitorStatusLoading: 'Cache loaded',
                 monitorStatusDedupe: 'Cache deduped',
-                monitorStatusImportNone: 'Import: no new tweets',
-                renderHintOff: 'Render limit is OFF: all tweets are shown.',
-                importAdded: (n) => `✅ ${n} new tweets imported`,
+                monitorStatusImportNone: 'Import: no new posts',
+                renderHintOff: 'Render limit is OFF: all posts are shown.',
+                importAdded: (n) => `✅ ${n} new posts imported`,
                 alertCodeCopied: '✅ Code copied!',
                 alertSettingsImported: '✅ Settings imported',
                 alertInvalidJson: '❌ Invalid JSON file',
@@ -592,7 +592,7 @@
                 alertDedupeDone: (n) => `✅ Dedupe done: ${n} duplicates removed`,
                 alertCacheEmpty: 'Cache is empty!',
                 alertZipSuccess: '✅ ZIP download complete!',
-                confirmClearCache: 'Delete all saved tweets?\n\nTip: export ZIP first.',
+                confirmClearCache: 'Delete all saved posts?\n\nTip: export ZIP first.',
                 manualCopyCode: 'Copy the code manually:',
                 guideCopied: '✅ Guide copied!',
                 manualCopyGuide: 'Copy the guide manually:',
@@ -605,7 +605,7 @@
                 zipEtaLine: (eta, p, f) => `Remaining ~ ${eta} • Parallel x${p}${f > 0 ? ` • Failed ${f}` : ''}`,
                 zipFinalizing: 'Building ZIP package...',
                 alertZipPartial: (ok, fail) => `⚠️ ZIP finished, but ${fail} files failed. Success: ${ok}`,
-                bookmarkletStarted: '⚠️ CleanReddit v5.3 BETA BIG started',
+                bookmarkletStarted: '⚠️ CleanReddit v0.1 BETA BIG started',
                 cacheLoaded: 'Cache loaded',
                 importPlus: (n) => `Import +${n}`,
                 confirmDeletePost: 'Delete this post and exclude it from ZIP export?',
@@ -682,6 +682,7 @@
         let cachePersistQueued = false;
         let deletedPostKeys = new Set();
         const viewFilterState = { user: 'all' };
+        const dashboardImageResolveBusy = new Set();
 
         function clamp(n, min, max, fallback) {
             const x = Number(n);
@@ -813,7 +814,7 @@
             setTxt('basicModeBtn', tr('basicBtn'));
             setTxt('proModeBtn', tr('proBtn'));
 
-            setTxt('settingsTitle', settings.language === 'en' ? '⚙️ Settings & Security (v5.3 BETA)' : '⚙️ Einstellungen & Sicherheit (v5.3 BETA)');
+            setTxt('settingsTitle', settings.language === 'en' ? '⚙️ Settings & Security (v0.1 BETA)' : '⚙️ Einstellungen & Sicherheit (v0.1 BETA)');
             setTxt('infoCacheTitle', settings.language === 'en' ? '🗑️ How to clear cache correctly' : '🗑️ Cache korrekt leeren');
             const step1 = document.getElementById('infoCacheStep1');
             const step2 = document.getElementById('infoCacheStep2');
@@ -841,8 +842,8 @@
             setTxt('groupStorage', settings.language === 'en' ? '💽 Storage backend' : '💽 Speicher-Backend');
             setTxt('storageModeLabel', settings.language === 'en' ? 'Storage mode:' : 'Speicher-Modus:');
             setTxt('settingsReloadNote', settings.language === 'en'
-                ? 'Use "Apply live on X" to switch settings without reload. Re-drag bookmarklet only if needed.'
-                : 'Mit "Live auf X anwenden" kannst du ohne Reload umschalten. Neu ziehen nur falls nötig.');
+                ? 'Use "Apply live on Reddit" to switch settings without reload. Re-drag bookmarklet only if needed.'
+                : 'Mit "Live auf Reddit anwenden" kannst du ohne Reload umschalten. Neu ziehen nur falls nötig.');
             const storageMode = document.getElementById('storageMode');
             if (storageMode && storageMode.options.length >= 3) {
                 storageMode.options[0].text = settings.language === 'en'
@@ -856,10 +857,10 @@
                     : 'Nur localStorage (legacy)';
             }
 
-            setTxt('installTitle', '⚠️ CleanReddit v5.3 BETA');
-            setTxt('bookmarkletBtn', '⚠️ CleanReddit v5.3 BETA');
+            setTxt('installTitle', '⚠️ CleanReddit v0.1 BETA');
+            setTxt('bookmarkletBtn', '⚠️ CleanReddit v0.1 BETA');
             setTxt('btnCopyCode', settings.language === 'en' ? '📋 Copy code' : '📋 Code kopieren');
-            setTxt('btnLiveApply', settings.language === 'en' ? '⚡ Apply live on X' : '⚡ Live auf X anwenden');
+            setTxt('btnLiveApply', settings.language === 'en' ? '⚡ Apply live on Reddit' : '⚡ Live auf Reddit anwenden');
             setTxt('btnRuntimeOn', settings.language === 'en' ? '▶️ Start runtime' : '▶️ Runtime starten');
             setTxt('btnRuntimeOff', settings.language === 'en' ? '🛑 Stop runtime' : '🛑 Runtime stoppen');
             setTxt('btnRuntimeResume', settings.language === 'en' ? '⏭️ Clear pause' : '⏭️ Pause lösen');
@@ -876,13 +877,13 @@
             setTxt('monLblLastScan', settings.language === 'en' ? 'Last scan' : 'Letzter Scan');
             setTxt('monLblNextDelay', settings.language === 'en' ? 'Next delay' : 'Next Delay');
             setTxt('monLblAutoTune', 'Auto-Tune');
-            setTxt('monLblAdded', settings.language === 'en' ? 'New tweets' : 'Neue Tweets');
+            setTxt('monLblAdded', settings.language === 'en' ? 'New posts' : 'Neue Posts');
             setTxt('monLblDupes', settings.language === 'en' ? 'Duplicates removed' : 'Duplikate entfernt');
             setTxt('monLblWrites', settings.language === 'en' ? 'Cache writes' : 'Cache Writes');
             setTxt('monLblStatus', settings.language === 'en' ? 'Status' : 'Status');
 
-            setTxt('viewerTitle', settings.language === 'en' ? '📦 Saved tweets' : '📦 Gespeicherte Tweets');
-            setTxt('statTweetsLabel', settings.language === 'en' ? 'tweets' : 'Tweets');
+            setTxt('viewerTitle', settings.language === 'en' ? '📦 Saved posts' : '📦 Gespeicherte Posts');
+            setTxt('statTweetsLabel', settings.language === 'en' ? 'posts' : 'Posts');
             setTxt('statShownLabel', settings.language === 'en' ? 'shown' : 'angezeigt');
             setTxt('statImagesLabel', settings.language === 'en' ? 'images' : 'Bilder');
             setTxt('statVideosLabel', settings.language === 'en' ? 'videos' : 'Videos');
@@ -901,12 +902,12 @@
             };
             setLabel('stealthMode', settings.language === 'en' ? '<strong>Stealth mode:</strong> random scan intervals instead of fixed timing' : '<strong>Stealth Mode:</strong> Zufällige Scan-Intervalle statt fixer Taktung', true);
             setLabel('rateLimit', settings.language === 'en' ? 'Rate-limit protection enabled' : 'Rate Limit Schutz aktiv');
-            setLabel('maxTweetsBeforePause', settings.language === 'en' ? 'Pause after tweets:' : 'Pause nach Tweets:');
+            setLabel('maxTweetsBeforePause', settings.language === 'en' ? 'Pause after posts:' : 'Pause nach Posts:');
             setLabel('pauseDurationMs', settings.language === 'en' ? 'Pause (ms):' : 'Pause (ms):');
             setLabel('humanBreak', settings.language === 'en' ? 'Human-like random breaks enabled' : 'Menschliche Zufallspausen aktiv');
             setLabel('humanBreakChance', settings.language === 'en' ? 'Chance %:' : 'Chance %:');
             setLabel('pauseOnHiddenTab', settings.language === 'en' ? 'Pause scans when tab is in background' : 'Scans pausieren, wenn Tab im Hintergrund ist');
-            setLabel('maxTweetsPerScan', settings.language === 'en' ? 'Max tweets per scan:' : 'Max Tweets pro Scan:');
+            setLabel('maxTweetsPerScan', settings.language === 'en' ? 'Max posts per scan:' : 'Max Posts pro Scan:');
             setLabel('scrollSpeed', settings.language === 'en' ? 'Scroll speed (px/s):' : 'Scroll-Geschwindigkeit (px/s):');
             setLabel('scrollPause', settings.language === 'en' ? 'Pause after activity (ms):' : 'Pause nach Aktivität (ms):');
             setLabel('skipRetweets', settings.language === 'en' ? 'Ignore retweets/reposts' : 'Retweets/Reposts ignorieren');
@@ -916,7 +917,7 @@
             setLabel('autoTuneStrength', settings.language === 'en' ? 'Strength:' : 'Stärke:');
             setLabel('enableDedupePro', settings.language === 'en' ? 'Duplicate engine 2.0 enabled' : 'Duplicate-Engine 2.0 aktiv');
             setLabel('trimCache', settings.language === 'en' ? 'Auto-limit cache size' : 'Cache automatisch begrenzen');
-            setLabel('maxCacheTweets', settings.language === 'en' ? 'Max tweets in cache:' : 'Max Tweets im Cache:');
+            setLabel('maxCacheTweets', settings.language === 'en' ? 'Max posts in cache:' : 'Max Posts im Cache:');
             setLabel('enableRenderLimit', settings.language === 'en' ? 'Render limit enabled' : 'Render-Limit aktiv');
             setLabel('renderLimit', settings.language === 'en' ? 'Dashboard render limit:' : 'Dashboard Render-Limit:');
             setLabel('enableZipThrottle', settings.language === 'en' ? 'ZIP throttle enabled' : 'ZIP Throttle aktiv');
@@ -1409,7 +1410,7 @@
             if (!settings.rateLimit) warn.push(en ? 'Rate limit is OFF (higher risk in long sessions).' : 'Rate Limit ist AUS (höheres Risiko bei langen Sessions).');
             if (!settings.stealthMode) warn.push(en ? 'Stealth mode is OFF.' : 'Stealth Mode ist AUS.');
             if (settings.scrollSpeed > 120) warn.push(en ? 'Scroll speed over 120 can reduce stability.' : 'ScrollSpeed über 120 kann die Stabilität verschlechtern.');
-            if (settings.maxCacheTweets < 500) warn.push(en ? 'Very low max cache can remove old tweets quickly.' : 'Sehr niedriger Max-Cache kann ältere Tweets schnell löschen.');
+            if (settings.maxCacheTweets < 500) warn.push(en ? 'Very low max cache can remove old tweets quickly.' : 'Sehr niedriger Max-Cache kann ältere Posts schnell löschen.');
             if (settings.maxScanDelay < settings.minScanDelay) warn.push(en ? 'Max scan is lower than min scan. Runtime will auto-use the lower/higher pair.' : 'Max Scan ist kleiner als Min Scan. Runtime nutzt automatisch das kleinere/größere Paar.');
 
             if (!warn.length) {
@@ -1652,6 +1653,8 @@
             return bare ? bare[0].toLowerCase() : '';
         }
 
+        const dashboardPostMediaCache = new Map();
+
         function isLikelyMp4ForDownload(url) {
             if (!url) return false;
             const u = String(url).replace(/&amp;/g, '&');
@@ -1667,7 +1670,7 @@
             const push = (value) => {
                 const raw = String(value || '').replace(/&amp;/g, '&').trim();
                 if (!raw || !/^https?:/i.test(raw)) return;
-                if (/\.m3u8(\?|$)/i.test(raw)) return;
+                if (!isLikelyMp4ForDownload(raw)) return;
                 out.push(raw);
             };
             const data = postData && typeof postData === 'object' ? postData : {};
@@ -1700,6 +1703,96 @@
             return Array.from(new Set(out));
         }
 
+        function collectRedditImageCandidates(postData) {
+            const out = [];
+            const pushImage = (value) => {
+                const raw = String(value || '').replace(/&amp;/g, '&').trim();
+                if (!raw || !/^https?:/i.test(raw)) return;
+                if (/\.mp4(\?|$)/i.test(raw) || /\.m3u8(\?|$)/i.test(raw)) return;
+                const normalized = normalizeTwitterImageUrl(raw) || raw;
+                if (!normalized || !/^https?:/i.test(normalized)) return;
+                const isImageHost = /(?:^|\.)i\.redd\.it$|(?:^|\.)preview\.redd\.it$|(?:^|\.)external-preview\.redd\.it$|redditmedia\.com|redditstatic\.com/i.test((() => {
+                    try { return new URL(normalized).hostname; } catch { return ''; }
+                })());
+                const hasImageExt = /\.(png|jpe?g|webp|gif)(\?|$)/i.test(normalized);
+                if (!isImageHost && !hasImageExt) return;
+                out.push(normalized);
+            };
+            const data = postData && typeof postData === 'object' ? postData : {};
+            pushImage(data?.url_overridden_by_dest);
+            pushImage(data?.url);
+            if (Array.isArray(data?.preview?.images)) {
+                for (const img of data.preview.images) {
+                    pushImage(img?.source?.url);
+                    if (Array.isArray(img?.resolutions)) {
+                        for (const r of img.resolutions) pushImage(r?.url);
+                    }
+                    pushImage(img?.variants?.gif?.source?.url);
+                }
+            }
+            if (data?.gallery_data?.items && data?.media_metadata && typeof data.media_metadata === 'object') {
+                for (const item of data.gallery_data.items) {
+                    const mediaId = String(item?.media_id || '');
+                    if (!mediaId) continue;
+                    const meta = data.media_metadata[mediaId] || {};
+                    pushImage(meta?.s?.u);
+                    pushImage(meta?.s?.gif);
+                    if (Array.isArray(meta?.p)) {
+                        for (const p of meta.p) pushImage(p?.u);
+                    }
+                }
+            }
+            if (Array.isArray(data.crosspost_parent_list)) {
+                for (const cp of data.crosspost_parent_list) {
+                    out.push(...collectRedditImageCandidates(cp));
+                }
+            }
+            return Array.from(new Set(out));
+        }
+
+        function parseRedditListingChildren(payload) {
+            if (Array.isArray(payload)) return payload[0]?.data?.children || [];
+            return payload?.data?.children || [];
+        }
+
+        async function fetchRedditPostMediaBundle(postId) {
+            const id = extractRedditPostId(postId);
+            if (!id) return { images: [], videos: [] };
+            const key = `id:${id}`;
+            if (dashboardPostMediaCache.has(key)) return dashboardPostMediaCache.get(key);
+
+            const promise = (async () => {
+                const endpoints = [
+                    `https://www.reddit.com/comments/${encodeURIComponent(id)}.json?raw_json=1`,
+                    `https://www.reddit.com/by_id/t3_${encodeURIComponent(id)}.json?raw_json=1`
+                ];
+                for (const endpoint of endpoints) {
+                    try {
+                        const res = await fetch(endpoint, { method: 'GET', credentials: 'omit', cache: 'no-store' });
+                        if (!res.ok) continue;
+                        const payload = await res.json();
+                        const children = parseRedditListingChildren(payload);
+                        const images = [];
+                        const videos = [];
+                        for (const child of children) {
+                            const data = child?.data || {};
+                            images.push(...collectRedditImageCandidates(data));
+                            videos.push(...collectRedditVideoCandidates(data));
+                        }
+                        const bundle = {
+                            images: Array.from(new Set(images.filter(Boolean))),
+                            videos: Array.from(new Set(videos.filter(Boolean)))
+                        };
+                        if (bundle.images.length || bundle.videos.length) return bundle;
+                    } catch {}
+                }
+                return { images: [], videos: [] };
+            })();
+
+            dashboardPostMediaCache.set(key, promise);
+            return promise;
+        }
+
         function rankRedditVideo(url) {
             const raw = String(url || '');
             let score = 0;
@@ -1719,29 +1812,13 @@
         }
 
         async function resolveVideoByTweetIdForDashboard(tweetId) {
-            const id = extractRedditPostId(tweetId);
-            if (!id) return '';
-            const endpoints = [
-                `https://www.reddit.com/comments/${encodeURIComponent(id)}.json?raw_json=1`,
-                `https://www.reddit.com/by_id/t3_${encodeURIComponent(id)}.json?raw_json=1`
-            ];
-            for (const endpoint of endpoints) {
-                try {
-                    const res = await fetch(endpoint, { method: 'GET', credentials: 'omit', cache: 'no-store' });
-                    if (!res.ok) continue;
-                    const payload = await res.json();
-                    const children = Array.isArray(payload)
-                        ? (payload[0]?.data?.children || [])
-                        : (payload?.data?.children || []);
-                    const candidates = [];
-                    for (const child of children) {
-                        candidates.push(...collectRedditVideoCandidates(child?.data || {}));
-                    }
-                    const best = pickBestRedditVideo(candidates);
-                    if (best) return best;
-                } catch {}
-            }
-            return '';
+            const media = await fetchRedditPostMediaBundle(tweetId);
+            return pickBestRedditVideo(media?.videos || []);
+        }
+
+        async function resolveImagesByPostIdForDashboard(postId) {
+            const media = await fetchRedditPostMediaBundle(postId);
+            return Array.isArray(media?.images) ? media.images : [];
         }
 
         async function resolveBestVideoUrlForTweet(tweet) {
@@ -1900,7 +1977,7 @@
             const CFG = JSON.stringify(settings);
             const DASH = JSON.stringify(DASHBOARD_URL);
             const source = `(function(){
-                var RUNTIME_KEY='__CT_V53_RUNTIME__';
+                var RUNTIME_KEY='__CR_V01_RUNTIME__';
                 try{
                     if(window[RUNTIME_KEY] && typeof window[RUNTIME_KEY].shutdown==='function'){
                         window[RUNTIME_KEY].shutdown({silent:true,full:true});
@@ -1909,7 +1986,7 @@
                 var C=${CFG};
                 var DASH=${DASH};
                 var KEY='rd_clean_cache';
-                var IDB_DB='rd_v53_cache_db';
+                var IDB_DB='rd_v01_cache_db';
                 var IDB_STORE='kv';
                 var MODE='auto';
                 var IS_MOBILE=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||'');
@@ -1966,8 +2043,8 @@
                     badgeIcon=C.greenBadge?'♾️':'🔴';
                     L=C.language==='en'?'en':'de';
                     TT=L==='en'
-                        ? {view:'👀 View',clear:'🗑️ Clear',scroll:'🔽 Scroll',stop:'⏸️ Stop',off:'❌ Off',resume:'⏭️ Resume',sync:'⏳ Sync',pause:'⏸️ Pause',limit:'⏸️ Limit',break:'☕ Break',active:'Active',paused:'Pause',stopped:'Stopped',clearConfirm:'Delete Reddit cache?',started:'⚠️ CleanReddit v5.3 BETA BIG started',mobileBlocked:'Mobile browser detected. Please use desktop (Windows/macOS/Linux).'}
-                        : {view:'👀 View',clear:'🗑️ Clear',scroll:'🔽 Scroll',stop:'⏸️ Stop',off:'❌ Aus',resume:'⏭️ Weiter',sync:'⏳ Sync',pause:'⏸️ Pause',limit:'⏸️ Limit',break:'☕ Break',active:'Aktiv',paused:'Pause',stopped:'Gestoppt',clearConfirm:'Reddit Cache löschen?',started:'⚠️ CleanReddit v5.3 BETA BIG gestartet',mobileBlocked:'Mobiler Browser erkannt. Bitte Desktop nutzen (Windows/macOS/Linux).'};
+                        ? {view:'👀 View',clear:'🗑️ Clear',scroll:'🔽 Scroll',stop:'⏸️ Stop',off:'❌ Off',resume:'⏭️ Resume',sync:'⏳ Sync',pause:'⏸️ Pause',limit:'⏸️ Limit',break:'☕ Break',active:'Active',paused:'Pause',stopped:'Stopped',clearConfirm:'Delete Reddit cache?',started:'⚠️ CleanReddit v0.1 BETA BIG started',mobileBlocked:'Mobile browser detected. Please use desktop (Windows/macOS/Linux).'}
+                        : {view:'👀 View',clear:'🗑️ Clear',scroll:'🔽 Scroll',stop:'⏸️ Stop',off:'❌ Aus',resume:'⏭️ Weiter',sync:'⏳ Sync',pause:'⏸️ Pause',limit:'⏸️ Limit',break:'☕ Break',active:'Aktiv',paused:'Pause',stopped:'Gestoppt',clearConfirm:'Reddit Cache löschen?',started:'⚠️ CleanReddit v0.1 BETA BIG gestartet',mobileBlocked:'Mobiler Browser erkannt. Bitte Desktop nutzen (Windows/macOS/Linux).'};
                     dynMaxTweets=Math.max(5,Number(C.maxTweetsPerScan)||35);
                     if(!C.rateLimit) scanCount=0;
                     if(!C.rateLimit && !C.humanBreak) pausedUntil=0;
@@ -1980,6 +2057,8 @@
                 var totalAdded=0,totalDupes=0,totalWrites=0,lastScanMs=0,nextDelayMs=0,lastStatusAt=0;
                 var videoByTweetId={};
                 var videoResolveBusy={};
+                var imageByTweetId={};
+                var imageResolveBusy={};
                 applyCfg();
 
                 function now(){return Date.now();}
@@ -2137,6 +2216,12 @@
                         if(!best) continue;
                         var low=best.toLowerCase();
                         if(low.indexOf('emoji')>=0 || low.indexOf('avatar')>=0 || low.indexOf('icon')>=0 || low.indexOf('award')>=0) continue;
+                        if(/\\.mp4(\\?|$)/i.test(low) || /\\.m3u8(\\?|$)/i.test(low) || /v\\.redd\\.it\\//i.test(low)) continue;
+                        var host='';
+                        try{ host=(new URL(best)).hostname||''; }catch(e){}
+                        var isImageHost=/(?:^|\\.)i\\.redd\\.it$|(?:^|\\.)preview\\.redd\\.it$|(?:^|\\.)external-preview\\.redd\\.it$|redditmedia\\.com|redditstatic\\.com/i.test(host);
+                        var hasImageExt=/\\.(png|jpe?g|webp|gif)(\\?|$)/i.test(best);
+                        if(!isImageHost && !hasImageExt) continue;
                         if(node.tagName==='IMG'){
                             var nw=Number(node.naturalWidth||node.width||0);
                             var nh=Number(node.naturalHeight||node.height||0);
@@ -2219,6 +2304,46 @@
                         emitStatus(true);
                     }
                 }
+                function mergeImageLists(existing,incoming){
+                    var out=[]; var map={};
+                    var base=Array.isArray(existing)?existing:[];
+                    var add=Array.isArray(incoming)?incoming:[];
+                    for(var i=0;i<base.length;i++){
+                        var src=normalizeTwitterImageUrl(base[i]) || String(base[i]||'');
+                        var key=normalizeUrl(src);
+                        if(!key || map[key]) continue;
+                        map[key]=1; out.push(src);
+                    }
+                    for(var j=0;j<add.length;j++){
+                        var next=normalizeTwitterImageUrl(add[j]) || String(add[j]||'');
+                        var nkey=normalizeUrl(next);
+                        if(!nkey || map[nkey]) continue;
+                        map[nkey]=1; out.push(next);
+                    }
+                    return out;
+                }
+                function patchResolvedImages(tweetId,imgList){
+                    if(!tweetId || !imgList || !imgList.length) return;
+                    var cache=getCache();
+                    var changed=false;
+                    for(var i=0;i<cache.length;i++){
+                        var it=cache[i]||{};
+                        var pid=String(it.postId||it.tweetId||'');
+                        if(pid!==String(tweetId)) continue;
+                        var merged=mergeImageLists(it.imgs||[],imgList);
+                        if(merged.length && JSON.stringify(merged)!==JSON.stringify(it.imgs||[])){
+                            it.imgs=merged;
+                            changed=true;
+                        }
+                    }
+                    if(changed){
+                        cache=dedupe(trim(cache));
+                        setCache(cache);
+                        totalWrites++;
+                        upd();
+                        emitStatus(true);
+                    }
+                }
                 function dedupe(cache){
                     var out=[];var map=new Set();var removed=0;
                     for(var i=0;i<cache.length;i++){
@@ -2265,23 +2390,77 @@
                     if(isRuntimeStopped){ B.innerText=TT.stopped+' • '+c.length; return; }
                     B.innerText = (pausedUntil>now() ? TT.pause : badgeIcon + ' ' + c.length);
                 }
+                function extractUrlsFromString(raw){
+                    var txt=decodeAmp(raw||'');
+                    if(!txt) return [];
+                    var found=[]; var seen={};
+                    var re=/https?:\\/\\/[^\"'\\s<>()]+/ig;
+                    var m;
+                    while((m=re.exec(txt))){
+                        var u=String(m[0]||'').trim();
+                        if(!u || seen[u]) continue;
+                        seen[u]=1;
+                        found.push(u);
+                    }
+                    return found;
+                }
+                function pickBestVideoCandidate(urls){
+                    var arr=(Array.isArray(urls)?urls:[]).filter(Boolean);
+                    if(!arr.length) return '';
+                    arr=arr.map(function(u){ return decodeAmp(u); });
+                    arr.sort(function(a,b){ return rankVideoUrl(b)-rankVideoUrl(a); });
+                    return arr[0] || '';
+                }
                 function getVideoSrc(t){
+                    var direct=[];
                     var v=t.querySelector('video');
                     if(v){
-                        if(v.currentSrc) return v.currentSrc;
-                        if(v.src) return v.src;
+                        if(v.currentSrc) direct.push(v.currentSrc);
+                        if(v.src) direct.push(v.src);
                         var s=v.querySelector('source');
-                        if(s && s.src) return s.src;
+                        if(s && s.src) direct.push(s.src);
                     }
-                    var vlink=t.querySelector('a[href*="v.redd.it/"], a[href*=".mp4"]');
+                    var vlink=t.querySelector('a[href*="v.redd.it/"], source[src*="v.redd.it/"]');
                     if(vlink){
-                        var href=vlink.getAttribute('href')||vlink.href||'';
-                        if(href) return href;
+                        var href=vlink.getAttribute('href')||vlink.getAttribute('src')||vlink.href||'';
+                        if(href) direct.push(href);
                     }
-                    return null;
+                    var players=t.querySelectorAll('shreddit-player, [data-testid=\"post-video\"]');
+                    for(var i=0;i<players.length;i++){
+                        var attrs=players[i].attributes||[];
+                        for(var ai=0;ai<attrs.length;ai++){
+                            var urls=extractUrlsFromString(attrs[ai].value||'');
+                            for(var ui=0;ui<urls.length;ui++) direct.push(urls[ui]);
+                        }
+                    }
+                    var best=pickBestVideoCandidate(direct);
+                    return best || null;
+                }
+                function hasVideoHintInPost(t){
+                    if(!t) return false;
+                    if(t.querySelector('video, shreddit-player, [data-testid=\"post-video\"], a[href*=\"v.redd.it/\"], source[src*=\"v.redd.it/\"]')) return true;
+                    var attrs=[
+                        t.getAttribute('post-type'),
+                        t.getAttribute('data-post-media-type'),
+                        t.getAttribute('data-click-id'),
+                        t.getAttribute('data-url'),
+                        t.getAttribute('content-href'),
+                        t.getAttribute('data-permalink')
+                    ];
+                    for(var ai=0;ai<attrs.length;ai++){
+                        var av=String(attrs[ai]||'').toLowerCase();
+                        if(!av) continue;
+                        if(av.indexOf('video')>=0 || av.indexOf('v.redd.it/')>=0) return true;
+                    }
+                    var refs=t.querySelectorAll('a[href], source[src]');
+                    for(var ri=0;ri<refs.length;ri++){
+                        var href=refs[ri].getAttribute('href')||refs[ri].getAttribute('src')||'';
+                        if(/v\\.redd\\.it\\//i.test(href)) return true;
+                    }
+                    return false;
                 }
                 function getTweetId(t){
-                    var direct=t.getAttribute('post-id') || t.getAttribute('data-post-id') || t.getAttribute('id') || '';
+                    var direct=t.getAttribute('post-id') || t.getAttribute('data-post-id') || t.getAttribute('thingid') || t.getAttribute('data-fullname') || t.getAttribute('fullname') || t.getAttribute('id') || '';
                     var fromDirect=extractRedditPostId(direct);
                     if(fromDirect) return fromDirect;
                     var links=t.querySelectorAll('a[href*="/comments/"], faceplate-tracker[source*="/comments/"]');
@@ -2306,7 +2485,7 @@
                     function add(v){
                         var raw=decodeAmp(v).trim();
                         if(!raw || !/^https?:/i.test(raw)) return;
-                        if(/\\.m3u8(\\?|$)/i.test(raw)) return;
+                        if(!isLikelyMp4Url(raw)) return;
                         if(seen[raw]) return;
                         seen[raw]=1;
                         list.push(raw);
@@ -2339,6 +2518,58 @@
                                     add(cpv.variants && cpv.variants.gif && cpv.variants.gif.source ? cpv.variants.gif.source.url : '');
                                 }
                             }
+                        }
+                    }
+                    return list;
+                }
+                function collectRedditImageCandidates(postData){
+                    var list=[]; var seen={};
+                    function add(v){
+                        var raw=decodeAmp(v).trim();
+                        if(!raw || !/^https?:/i.test(raw)) return;
+                        if(/\\.mp4(\\?|$)/i.test(raw) || /\\.m3u8(\\?|$)/i.test(raw)) return;
+                        var norm=normalizeTwitterImageUrl(raw) || raw;
+                        if(!norm || !/^https?:/i.test(norm)) return;
+                        var key=normalizeUrl(norm);
+                        if(!key || seen[key]) return;
+                        seen[key]=1;
+                        list.push(norm);
+                    }
+                    var p=(postData && typeof postData==='object') ? postData : {};
+                    add(p.url_overridden_by_dest);
+                    add(p.url);
+                    if(p.preview && Array.isArray(p.preview.images)){
+                        for(var pi=0;pi<p.preview.images.length;pi++){
+                            var pv=p.preview.images[pi]||{};
+                            add(pv.source ? pv.source.url : '');
+                            if(Array.isArray(pv.resolutions)){
+                                for(var pr=0;pr<pv.resolutions.length;pr++){
+                                    add(pv.resolutions[pr] ? pv.resolutions[pr].url : '');
+                                }
+                            }
+                            add(pv.variants && pv.variants.gif && pv.variants.gif.source ? pv.variants.gif.source.url : '');
+                        }
+                    }
+                    if(p.gallery_data && Array.isArray(p.gallery_data.items) && p.media_metadata && typeof p.media_metadata==='object'){
+                        for(var gi=0;gi<p.gallery_data.items.length;gi++){
+                            var it=p.gallery_data.items[gi]||{};
+                            var mid=String(it.media_id||'');
+                            if(!mid) continue;
+                            var meta=p.media_metadata[mid]||{};
+                            add(meta.s ? meta.s.u : '');
+                            add(meta.s ? meta.s.gif : '');
+                            if(Array.isArray(meta.p)){
+                                for(var pp=0;pp<meta.p.length;pp++){
+                                    add(meta.p[pp] ? meta.p[pp].u : '');
+                                }
+                            }
+                        }
+                    }
+                    if(Array.isArray(p.crosspost_parent_list)){
+                        for(var cpi=0;cpi<p.crosspost_parent_list.length;cpi++){
+                            var cp=p.crosspost_parent_list[cpi]||{};
+                            var child=collectRedditImageCandidates(cp);
+                            for(var ci=0;ci<child.length;ci++) add(child[ci]);
                         }
                     }
                     return list;
@@ -2393,6 +2624,38 @@
                     }
                     return tryNext();
                 }
+                function resolveImagesByTweetId(tweetId){
+                    var pid=extractRedditPostId(tweetId);
+                    if(!pid) return Promise.resolve([]);
+                    var endpoints=[
+                        'https://www.reddit.com/comments/'+encodeURIComponent(pid)+'.json?raw_json=1',
+                        'https://www.reddit.com/by_id/t3_'+encodeURIComponent(pid)+'.json?raw_json=1'
+                    ];
+                    var idx=0;
+                    function tryNext(){
+                        if(idx>=endpoints.length) return Promise.resolve([]);
+                        var url=endpoints[idx++];
+                        return fetch(url,{method:'GET',credentials:'omit',cache:'no-store'})
+                            .then(function(r){ if(!r.ok) throw new Error('http_'+r.status); return r.json(); })
+                            .then(function(payload){
+                                var children=[];
+                                if(Array.isArray(payload)){
+                                    children=((payload[0]&&payload[0].data&&payload[0].data.children)||[]);
+                                } else if(payload && payload.data && Array.isArray(payload.data.children)){
+                                    children=payload.data.children;
+                                }
+                                var out=[];
+                                for(var i=0;i<children.length;i++){
+                                    var c=children[i]&&children[i].data?children[i].data:{};
+                                    var imgs=collectRedditImageCandidates(c);
+                                    for(var j=0;j<imgs.length;j++) out.push(imgs[j]);
+                                }
+                                if(out.length) return out;
+                                return tryNext();
+                            }).catch(function(){ return tryNext(); });
+                    }
+                    return tryNext();
+                }
                 function dlMedia(url,name){
                     return fetch(url).then(function(r){
                         if(!r.ok) throw new Error('http_'+r.status);
@@ -2418,7 +2681,8 @@
                         t.dataset.ctDl='1';
                         var imgUrls=extractImageUrls(t);
                         var vidSrc=getVideoSrc(t);
-                        if(!(imgUrls.length>0 || vidSrc)) return;
+                        var hasVideoHint=hasVideoHintInPost(t);
+                        if(!(imgUrls.length>0 || vidSrc || hasVideoHint)) return;
                         var btn=document.createElement('button');
                         btn.innerText='💾';
                         btn.setAttribute('data-ct-dl-btn','1');
@@ -2427,32 +2691,69 @@
                             e.preventDefault();e.stopPropagation();
                             var currentVid=getVideoSrc(t) || vidSrc;
                             var tweetId=getTweetId(t);
+                            var latestLocalImgs=extractImageUrls(t);
+                            var localImgs=mergeImageLists(imgUrls,latestLocalImgs);
+                            var hasImagesNow=localImgs.length>0;
+                            var domVideoHint=hasVideoHintInPost(t) || hasVideoHint;
+                            var hasDirectMp4=!!(currentVid && isLikelyMp4Url(currentVid));
+                            var videoHintNow=domVideoHint || (hasDirectMp4 && !hasImagesNow);
                             var seed=(tweetId||String(Date.now()))+'_'+Math.floor(Math.random()*100000);
-                            var saveImages=function(){
+                            var saveImages=function(extraImages){
                                 var latest=extractImageUrls(t);
-                                var target=latest.length?latest:imgUrls;
-                                target.forEach(function(src,i){ dlMedia(src,'img_'+seed+'_'+i+'.jpg').catch(function(){}); });
+                                var target=mergeImageLists(localImgs,latest);
+                                if(tweetId && imageByTweetId[tweetId] && imageByTweetId[tweetId].length){
+                                    target=mergeImageLists(target,imageByTweetId[tweetId]);
+                                }
+                                if(Array.isArray(extraImages) && extraImages.length){
+                                    target=mergeImageLists(target,extraImages);
+                                    if(tweetId){
+                                        imageByTweetId[tweetId]=mergeImageLists(imageByTweetId[tweetId]||[],extraImages);
+                                        patchResolvedImages(tweetId,extraImages);
+                                    }
+                                }
+                                target.forEach(function(src,i){
+                                    var ext=(String(src||'').match(/\\.(jpg|jpeg|png|webp|gif)(\\?|$)/i)||[])[1] || 'jpg';
+                                    dlMedia(src,'img_'+seed+'_'+i+'.'+String(ext).toLowerCase()).catch(function(){});
+                                });
                             };
                             var saveVideo=function(url){
-                                if(!url){ saveImages(); return; }
+                                if(!url || !isLikelyMp4Url(url)){ saveImages(); return; }
                                 dlMedia(url,'video_'+seed+'.mp4').catch(function(){
                                     try{ window.open(url,'_blank','noopener,noreferrer'); }catch(e){}
                                     saveImages();
                                 });
                             };
-                            if(currentVid && isLikelyMp4Url(currentVid)){
+                            if(videoHintNow && currentVid && isLikelyMp4Url(currentVid)){
                                 saveVideo(currentVid);
                                 return;
                             }
-                            if(tweetId){
-                                resolveVideoByTweetId(tweetId).then(function(resolved){
-                                    if(resolved) { saveVideo(resolved); return; }
-                                    if(currentVid && /^https?:/i.test(currentVid) && /\\.mp4(\\?|$)/i.test(currentVid) && !/\\.m3u8(\\?|$)/i.test(currentVid)) { saveVideo(currentVid); return; }
-                                    saveImages();
+                            if(tweetId && videoHintNow){
+                                Promise.all([
+                                    resolveVideoByTweetId(tweetId).catch(function(){ return ''; }),
+                                    resolveImagesByTweetId(tweetId).catch(function(){ return []; })
+                                ]).then(function(resolvedAll){
+                                    var resolvedVid=resolvedAll[0]||'';
+                                    var resolvedImgs=Array.isArray(resolvedAll[1])?resolvedAll[1]:[];
+                                    if(resolvedVid && isLikelyMp4Url(resolvedVid)){
+                                        videoByTweetId[tweetId]=resolvedVid;
+                                        patchResolvedVideo(tweetId,resolvedVid);
+                                        saveVideo(resolvedVid);
+                                        return;
+                                    }
+                                    if(hasDirectMp4) {
+                                        saveVideo(currentVid);
+                                        return;
+                                    }
+                                    saveImages(resolvedImgs);
                                 });
                                 return;
                             }
-                            if(currentVid && /^https?:/i.test(currentVid) && /\\.mp4(\\?|$)/i.test(currentVid) && !/\\.m3u8(\\?|$)/i.test(currentVid)) { saveVideo(currentVid); return; }
+                            if(tweetId){
+                                resolveImagesByTweetId(tweetId).then(function(resolvedImgs){
+                                    saveImages(Array.isArray(resolvedImgs)?resolvedImgs:[]);
+                                }).catch(function(){ saveImages(); });
+                                return;
+                            }
                             saveImages();
                         };
                         t.style.position='relative';
@@ -2713,12 +3014,18 @@
                         var imgSrcs=extractImageUrls(t);
                         var rawVid=getVideoSrc(t);
                         var hasVideoElement=!!t.querySelector('video');
+                        var hasVideoHint=hasVideoHintInPost(t);
                         var vidSrc='';
                         if(rawVid && isLikelyMp4Url(rawVid)) vidSrc=rawVid;
                         if(!vidSrc && tweetId && videoByTweetId[tweetId]) vidSrc=videoByTweetId[tweetId];
+                        if(tweetId && imageByTweetId[tweetId] && imageByTweetId[tweetId].length){
+                            imgSrcs=mergeImageLists(imgSrcs,imageByTweetId[tweetId]);
+                        }
+                        var hasImages=imgSrcs.length>0;
+                        var shouldHandleVideo=!!vidSrc || hasVideoHint || hasVideoElement || (!!rawVid && isLikelyMp4Url(rawVid) && !hasImages);
                         var text=readPostText(t);
                         var user=readPostUser(t) || 'unknown_user';
-                        if(!(text || imgSrcs.length>0 || rawVid || hasVideoElement || vidSrc)) continue;
+                        if(!(text || hasImages || shouldHandleVideo)) continue;
 
                         var id=tweetKey({tweetId:tweetId,postId:tweetId,user:user,text:text,video:vidSrc,imgs:imgSrcs});
                         seenThisScan++;
@@ -2754,10 +3061,13 @@
                             if(vidSrc && existingById.video!==vidSrc){
                                 existingById.video=vidSrc; changed=true;
                             }
+                            if(shouldHandleVideo && !existingById.hasVideoHint){
+                                existingById.hasVideoHint=true; changed=true;
+                            }
                             if(C.detectThreads && /\\/comments\\//i.test(location.pathname||'') && !existingById.isThread){
                                 existingById.isThread=true; changed=true;
                             }
-                            if((rawVid || hasVideoElement) && tweetId && !videoByTweetId[tweetId] && !videoResolveBusy[tweetId]){
+                            if(shouldHandleVideo && tweetId && !videoByTweetId[tweetId] && !videoResolveBusy[tweetId]){
                                 (function(tid){
                                     videoResolveBusy[tid]=1;
                                     resolveVideoByTweetId(tid).then(function(resolved){
@@ -2767,6 +3077,19 @@
                                         }
                                     }).finally(function(){
                                         delete videoResolveBusy[tid];
+                                    });
+                                })(tweetId);
+                            }
+                            if(tweetId && !imageByTweetId[tweetId] && !imageResolveBusy[tweetId]){
+                                (function(tid){
+                                    imageResolveBusy[tid]=1;
+                                    resolveImagesByTweetId(tid).then(function(resolvedImgs){
+                                        if(Array.isArray(resolvedImgs) && resolvedImgs.length){
+                                            imageByTweetId[tid]=mergeImageLists(imageByTweetId[tid]||[],resolvedImgs);
+                                            patchResolvedImages(tid,resolvedImgs);
+                                        }
+                                    }).finally(function(){
+                                        delete imageResolveBusy[tid];
                                     });
                                 })(tweetId);
                             }
@@ -2785,10 +3108,11 @@
                         if(tweetId){ item.tweetId=tweetId; item.postId=tweetId; }
                         if(vidSrc) item.video=vidSrc;
                         if(imgSrcs.length>0) item.imgs=imgSrcs;
+                        if(shouldHandleVideo) item.hasVideoHint=true;
                         if(C.detectThreads && /\\/comments\\//i.test(location.pathname||'')) item.isThread=true;
                         cache.push(item);
                         if(tweetId) byTweetId[String(tweetId)]=item;
-                        if((rawVid || hasVideoElement) && tweetId && !videoByTweetId[tweetId] && !videoResolveBusy[tweetId]){
+                        if(shouldHandleVideo && tweetId && !videoByTweetId[tweetId] && !videoResolveBusy[tweetId]){
                             (function(tid){
                                 videoResolveBusy[tid]=1;
                                 resolveVideoByTweetId(tid).then(function(resolved){
@@ -2798,6 +3122,19 @@
                                     }
                                 }).finally(function(){
                                     delete videoResolveBusy[tid];
+                                });
+                            })(tweetId);
+                        }
+                        if(tweetId && !imageByTweetId[tweetId] && !imageResolveBusy[tweetId]){
+                            (function(tid){
+                                imageResolveBusy[tid]=1;
+                                resolveImagesByTweetId(tid).then(function(resolvedImgs){
+                                    if(Array.isArray(resolvedImgs) && resolvedImgs.length){
+                                        imageByTweetId[tid]=mergeImageLists(imageByTweetId[tid]||[],resolvedImgs);
+                                        patchResolvedImages(tid,resolvedImgs);
+                                    }
+                                }).finally(function(){
+                                    delete imageResolveBusy[tid];
                                 });
                             })(tweetId);
                         }
@@ -2973,22 +3310,22 @@
         function getSafetyGuideText() {
             if (settings.language === 'en') {
                 return [
-                    'CleanReddit v5.3 - Anti-ban quick guide',
+                    'CleanReddit v0.1 - Anti-ban quick guide',
                     '',
                     'Mode at the top:',
-                    '- Use v5.2 = Beginner mode (simple)',
-                    '- v5.3 Pro mode = all settings',
+                    '- Nobby mode (Simple) = beginner-friendly settings',
+                    '- Pro mode (Advanced) = all settings',
                     '',
                     'Safe start:',
                     '- Stealth: ON',
                     '- Min/Max scan: 2200/6500 ms',
-                    '- Rate limit: ON, 45 tweets, 30000 ms pause',
+                    '- Rate limit: ON, 45 posts, 30000 ms pause',
                     '- Human break: ON, 8%',
                     '- Pause on hidden tab: ON',
-                    '- Max tweets/scan: 35',
+                    '- Max posts/scan: 35',
                     '',
                     'Optional to disable:',
-                    '- Render limit: OFF = show all tweets',
+                    '- Render limit: OFF = show all posts',
                     '- ZIP throttle: OFF = no throttling, faster but higher load',
                     '- Live monitor: OFF = no runtime panel',
                     '- Export Pro: OFF = standard ZIP export',
@@ -3001,28 +3338,28 @@
                     '',
                     'Do not be too aggressive:',
                     '- Min scan not below 1500 ms',
-                    '- Max tweets/scan not above 80',
+                    '- Max posts/scan not above 80',
                     '- Scroll speed not above 120',
                     '- Do not disable rate limit for long sessions'
                 ].join('\n');
             }
             return [
-                'CleanReddit v5.3 - Anti-Ban Kurzguide',
+                'CleanReddit v0.1 - Anti-Ban Kurzguide',
                 '',
                 'Moduswahl oben:',
-                '- v5.2 benutzen = Anfänger-Modus (einfach)',
-                '- v5.3 Pro-Modus = alle Einstellungen',
+                '- Nobby-Modus (Einfach) = für Einsteiger',
+                '- Pro-Modus (Erweitert) = alle Einstellungen',
                 '',
                 'Sicherer Start:',
                 '- Stealth: AN',
                 '- Min/Max Scan: 2200/6500 ms',
-                '- RateLimit: AN, 45 Tweets, 30000 ms Pause',
+                '- RateLimit: AN, 45 Posts, 30000 ms Pause',
                 '- Human Break: AN, 8%',
                 '- Pause on Hidden Tab: AN',
-                '- Max Tweets/Scan: 35',
+                '- Max Posts/Scan: 35',
                 '',
                 'Optional komplett ausschaltbar:',
-                '- Render-Limit: AUS = zeigt alle Tweets (wie altes v5 Verhalten)',
+                '- Render-Limit: AUS = zeigt alle Posts',
                 '- ZIP Throttle: AUS = keine Drossel, schneller aber mehr Last',
                 '- Live Monitor: AUS = kein Runtime-Panel',
                 '- Export Pro: AUS = normaler ZIP Export',
@@ -3035,7 +3372,7 @@
                 '',
                 'Nicht zu aggressiv:',
                 '- Min Scan nicht unter 1500 ms',
-                '- Max Tweets/Scan nicht über 80',
+                '- Max Posts/Scan nicht über 80',
                 '- ScrollSpeed nicht über 120',
                 '- RateLimit nicht ausschalten bei Dauerlauf'
             ].join('\n');
@@ -3110,7 +3447,7 @@
             const blobUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = blobUrl;
-            a.download = `ct_v53_settings_${Date.now()}.json`;
+            a.download = `cr_v01_settings_${Date.now()}.json`;
             a.click();
             setTimeout(() => URL.revokeObjectURL(blobUrl), 45000);
         }
@@ -3139,6 +3476,7 @@
                 root.preferences,
                 root.payload,
                 root.data,
+                root.rd_settings_v01,
                 root.rd_settings_v53,
                 root.ctSettings
             ];
@@ -3283,7 +3621,7 @@
             urls.forEach((url, i) => {
                 setTimeout(() => {
                     const src = normalizeTwitterImageUrl(url) || url;
-                    const ext = src.match(/\.(jpg|jpeg|png|webp)/i)?.[1] || 'jpg';
+                    const ext = src.match(/\.(jpg|jpeg|png|webp|gif)/i)?.[1] || 'jpg';
                     downloadMedia(src, `image_${Date.now()}_${i}.${ext}`);
                 }, i * 280);
             });
@@ -3299,6 +3637,7 @@
         async function downloadTweetVideoFromEncoded(encodedTweet) {
             try {
                 const tweet = JSON.parse(decodeURIComponent(encodedTweet));
+                if (!tweet.video && !tweet.hasVideoHint && !tweet.postId && !tweet.tweetId) return;
                 const bestUrl = await resolveBestVideoUrlForTweet(tweet);
                 if (!bestUrl) return;
                 await downloadMedia(bestUrl, `video_${tweet.postId || tweet.tweetId || Date.now()}.mp4`);
@@ -3336,11 +3675,25 @@
             let lastUiPaint = 0;
 
             for (const tweet of data) {
-                const imageList = [];
+                const postId = extractRedditPostId(tweet.postId || tweet.tweetId || '');
+                let imageList = [];
                 if (Array.isArray(tweet.imgs) && tweet.imgs.length) imageList.push(...tweet.imgs);
                 else if (tweet.img) imageList.push(tweet.img);
+
+                if (postId) {
+                    const resolvedImgs = await resolveImagesByPostIdForDashboard(postId).catch(() => []);
+                    if (Array.isArray(resolvedImgs) && resolvedImgs.length) {
+                        const merged = Array.from(new Set([...imageList, ...resolvedImgs].map((s) => normalizeTwitterImageUrl(s) || s).filter(Boolean)));
+                        if (merged.length !== imageList.length) {
+                            imageList = merged;
+                            tweet.imgs = merged;
+                            cacheUpdated = true;
+                        }
+                    }
+                }
+
                 imageList.forEach((srcRaw) => tasks.push({ type: 'image', tweet, src: srcRaw }));
-                if (tweet.video) tasks.push({ type: 'video', tweet, src: tweet.video });
+                if (tweet.video || (tweet.hasVideoHint && postId)) tasks.push({ type: 'video', tweet, src: tweet.video || '' });
             }
 
             const total = tasks.length;
@@ -3373,7 +3726,7 @@
             };
 
             const putFile = async (tweet, type, src, blob, index) => {
-                const extMatch = src.match(/\.(jpg|jpeg|png|webp|mp4)/i);
+                const extMatch = src.match(/\.(jpg|jpeg|png|webp|gif|mp4)/i);
                 const ext = extMatch ? extMatch[1].toLowerCase() : (type === 'video' ? 'mp4' : 'jpg');
                 const base = type === 'video' ? `video_${index}` : `image_${index}`;
                 const filename = `${base}.${ext}`;
@@ -3481,7 +3834,7 @@
                 const zipUrl = URL.createObjectURL(content);
                 const a = document.createElement('a');
                 a.href = zipUrl;
-                a.download = exportPro ? `reddit_media_v53_pro_${Date.now()}.zip` : `reddit_media_v53_${Date.now()}.zip`;
+                a.download = exportPro ? `reddit_media_v01_pro_${Date.now()}.zip` : `reddit_media_v01_${Date.now()}.zip`;
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(zipUrl), 90000);
                 monitorState.status = tr('zipDone');
@@ -3551,7 +3904,7 @@
             const blobUrl = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = blobUrl;
-            a.download = `reddit_archive_v53_${Date.now()}.html`;
+            a.download = `reddit_archive_v01_${Date.now()}.html`;
             a.click();
             setTimeout(() => URL.revokeObjectURL(blobUrl), 45000);
         }
@@ -3562,6 +3915,16 @@
                 const fallbackText = settings.language === 'en'
                     ? '⚠️ Media could not be loaded in viewer.'
                     : '⚠️ Media konnte im Viewer nicht geladen werden.';
+                const showFallback = () => {
+                    let msg = card.querySelector('.media-fallback-text');
+                    if (!msg) {
+                        msg = document.createElement('div');
+                        msg.className = 'subtle media-fallback-text';
+                        msg.style.marginTop = '8px';
+                        card.appendChild(msg);
+                    }
+                    msg.textContent = fallbackText;
+                };
 
                 card.querySelectorAll('img[data-media-src]').forEach((img) => {
                     const src = img.getAttribute('data-media-src') || img.getAttribute('src') || '';
@@ -3576,33 +3939,94 @@
                             return;
                         }
                         img.style.display = 'none';
+                        showFallback();
                     });
                 });
 
                 const video = card.querySelector('video.tweet-video');
                 if (!video) return;
                 let triedResolve = false;
-                video.addEventListener('error', async () => {
-                    if (!triedResolve) {
-                        triedResolve = true;
-                        const resolved = await resolveBestVideoUrlForTweet({ tweetId, video: video.currentSrc || video.src });
-                        if (resolved && resolved !== video.getAttribute('src')) {
-                            video.setAttribute('src', resolved);
-                            video.load();
-                            return;
+                const tryResolve = async () => {
+                    if (triedResolve) return;
+                    triedResolve = true;
+                    const resolved = await resolveBestVideoUrlForTweet({ postId: tweetId, tweetId, video: video.currentSrc || video.src });
+                    if (resolved && resolved !== video.getAttribute('src')) {
+                        video.setAttribute('src', resolved);
+                        video.removeAttribute('data-needs-resolve');
+                        video.load();
+                        const current = getCache();
+                        let changed = false;
+                        for (const it of current) {
+                            const id = String(it?.postId || it?.tweetId || '').trim();
+                            if (id === tweetId && it.video !== resolved) {
+                                it.video = resolved;
+                                it.hasVideoHint = true;
+                                changed = true;
+                            }
                         }
+                        if (changed) {
+                            setCache(normalizeCache(current, { trackDupes: false }), { immediate: true });
+                            monitorState.writes++;
+                        }
+                        return true;
                     }
+                    return false;
+                };
+
+                if (video.getAttribute('data-needs-resolve') === '1' && tweetId) {
+                    tryResolve().then((ok) => {
+                        if (!ok) {
+                            video.style.display = 'none';
+                            showFallback();
+                        }
+                    }).catch(() => {
+                        video.style.display = 'none';
+                        showFallback();
+                    });
+                }
+                video.addEventListener('error', async () => {
+                    const ok = await tryResolve().catch(() => false);
+                    if (ok) return;
                     video.style.display = 'none';
-                    let msg = card.querySelector('.media-fallback-text');
-                    if (!msg) {
-                        msg = document.createElement('div');
-                        msg.className = 'subtle media-fallback-text';
-                        msg.style.marginTop = '8px';
-                        card.appendChild(msg);
-                    }
-                    msg.textContent = fallbackText;
+                    showFallback();
                 });
             });
+        }
+
+        function resolveVisibleImageGalleries(visible, cacheAll) {
+            if (!Array.isArray(visible) || !visible.length) return;
+            const queue = [];
+            for (const t of visible) {
+                const postId = extractRedditPostId(t?.postId || t?.tweetId || '');
+                if (!postId) continue;
+                if (dashboardImageResolveBusy.has(postId)) continue;
+                queue.push({ postId, item: t });
+            }
+            if (!queue.length) return;
+
+            const batch = queue.slice(0, 6);
+            let changed = false;
+            Promise.all(batch.map(async ({ postId, item }) => {
+                dashboardImageResolveBusy.add(postId);
+                try {
+                    const resolved = await resolveImagesByPostIdForDashboard(postId);
+                    if (!Array.isArray(resolved) || !resolved.length) return;
+                    const current = Array.isArray(item.imgs) ? item.imgs : (item.img ? [item.img] : []);
+                    const merged = Array.from(new Set([...current, ...resolved].map((s) => normalizeTwitterImageUrl(s) || s).filter(Boolean)));
+                    if (merged.length > current.length) {
+                        item.imgs = merged;
+                        changed = true;
+                    }
+                } catch {}
+                finally {
+                    dashboardImageResolveBusy.delete(postId);
+                }
+            })).then(() => {
+                if (!changed) return;
+                setCache(normalizeCache(cacheAll, { trackDupes: false }), { immediate: true });
+                monitorState.writes++;
+                loadCache();
+            }).catch(() => {});
         }
 
         function loadCache() {
@@ -3663,8 +4087,8 @@
             const limitHint = settings.enableRenderLimit
                 ? (hidden > 0
                     ? (settings.language === 'en'
-                        ? `Performance mode: ${hidden} older tweets not rendered (still in cache).`
-                        : `Performance-Modus: ${hidden} ältere Tweets nicht gerendert (im Cache vorhanden).`)
+                        ? `Performance mode: ${hidden} older posts not rendered (still in cache).`
+                        : `Performance-Modus: ${hidden} ältere Posts nicht gerendert (im Cache vorhanden).`)
                     : '')
                 : tr('renderHintOff');
             renderHint.innerText = filterLabel && limitHint
@@ -3690,26 +4114,31 @@
                     card.dataset.tweetId = id;
                 }
 
+                const postId = String(t.postId || t.tweetId || '');
                 const videoCandidate = t.video ? String(t.video) : '';
                 const safeVideoSrc = videoCandidate && isLikelyMp4ForDownload(videoCandidate) ? videoCandidate : '';
+                const hasVideoHint = !!t.hasVideoHint || !!safeVideoSrc;
                 if (safeVideoSrc) {
                     mediaHTML += `<video src="${escapeHtml(safeVideoSrc)}" class="tweet-video" controls preload="metadata"></video>`;
                     badgeParts.push('🎥 VIDEO');
                     const encodedTweet = encodeURIComponent(JSON.stringify({
-                        postId: t.postId || t.tweetId || '',
+                        postId,
                         tweetId: t.tweetId || '',
                         video: videoCandidate || '',
+                        hasVideoHint: true,
                         user: t.user || '',
                         date: t.date || Date.now()
                     }));
                     dlParts.push(`<button class="tweet-dl-btn" onclick="downloadTweetVideoFromEncoded('${encodedTweet}')">💾 Video</button>`);
-                } else if (videoCandidate) {
+                } else if (hasVideoHint && postId) {
                     badgeParts.push('🎥 VIDEO');
-                    mediaHTML += `<div class="subtle media-fallback-text">${settings.language === 'en' ? 'Video URL needs refresh.' : 'Video-URL muss aktualisiert werden.'}</div>`;
+                    mediaHTML += `<video class="tweet-video" controls preload="none" data-needs-resolve="1"></video>`;
+                    mediaHTML += `<div class="subtle media-fallback-text">${settings.language === 'en' ? 'Resolving video URL...' : 'Video-URL wird aufgelöst...'}</div>`;
                     const encodedTweet = encodeURIComponent(JSON.stringify({
-                        postId: t.postId || t.tweetId || '',
+                        postId,
                         tweetId: t.tweetId || '',
                         video: videoCandidate || '',
+                        hasVideoHint: true,
                         user: t.user || '',
                         date: t.date || Date.now()
                     }));
@@ -3726,7 +4155,7 @@
                     const singleImg = normalizeTwitterImageUrl(t.img) || t.img;
                     mediaHTML += `<img src="${escapeHtml(singleImg)}" data-media-src="${escapeHtml(singleImg)}" class="tweet-img" loading="lazy">`;
                     badgeParts.push('🖼️ IMG');
-                    const ext = singleImg.match(/\.(jpg|jpeg|png|webp)/i)?.[1] || 'jpg';
+                    const ext = singleImg.match(/\.(jpg|jpeg|png|webp|gif)/i)?.[1] || 'jpg';
                     dlParts.push(`<button class="tweet-dl-btn" onclick="downloadMedia('${singleImg}','image_${idx}.${ext}')">💾 Bild</button>`);
                 }
 
@@ -3743,6 +4172,7 @@
 
             grid.appendChild(frag);
             attachViewerMediaFallbacks();
+            resolveVisibleImageGalleries(visible, cacheAll);
             if (settings.enableLiveMonitor) {
                 if (!monitorState.status || monitorState.status === 'Idle') monitorState.status = tr('cacheLoaded');
                 updateMonitorView();
