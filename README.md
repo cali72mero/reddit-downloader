@@ -19,9 +19,9 @@ Es speichert erkannte Bilder, GIF/MP4-Videos und exportiert alles als ZIP.
 ## Start
 
 1. Ordner oeffnen: `reddit-downloader`
-2. Lokal starten (empfohlen): `python3 -m http.server 8080`
-3. Im Browser aufrufen: `http://localhost:8080/reddit-downloader/index.html`
-4. Oder direkt ueber GitHub Pages hosten.
+2. Deployment ueber GitHub Pages durchfuehren.
+3. Dashboard direkt ueber die GitHub-URL aufrufen.
+4. Localhost-Betrieb ist hier nicht vorgesehen.
 
 ## Nutzung
 
