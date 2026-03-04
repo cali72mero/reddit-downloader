@@ -1755,11 +1755,26 @@
             return payload?.data?.children || [];
         }
 
-        async function fetchRedditPostMediaBundle(postId) {
+        async function fetchJsonWithTimeout(url, timeoutMs = 8000) {
+            const ac = new AbortController();
+            const timer = setTimeout(() => ac.abort(), Math.max(1200, Number(timeoutMs) || 8000));
+            try {
+                const res = await fetch(url, { method: 'GET', credentials: 'omit', cache: 'no-store', signal: ac.signal });
+                if (!res.ok) return null;
+                return await res.json();
+            } catch {
+                return null;
+            } finally {
+                clearTimeout(timer);
+            }
+        }
+
+        async function fetchRedditPostMediaBundle(postId, options = {}) {
             const id = extractRedditPostId(postId);
             if (!id) return { images: [], videos: [] };
             const key = `id:${id}`;
             if (dashboardPostMediaCache.has(key)) return dashboardPostMediaCache.get(key);
+            const timeoutMs = Math.max(1200, Number(options.timeoutMs) || 8000);
 
             const promise = (async () => {
                 const endpoints = [
@@ -1768,9 +1783,8 @@
                 ];
                 for (const endpoint of endpoints) {
                     try {
-                        const res = await fetch(endpoint, { method: 'GET', credentials: 'omit', cache: 'no-store' });
-                        if (!res.ok) continue;
-                        const payload = await res.json();
+                        const payload = await fetchJsonWithTimeout(endpoint, timeoutMs);
+                        if (!payload) continue;
                         const children = parseRedditListingChildren(payload);
                         const images = [];
                         const videos = [];
@@ -1790,7 +1804,9 @@
             })();
 
             dashboardPostMediaCache.set(key, promise);
-            return promise;
+            const result = await promise;
+            if (!result.images.length && !result.videos.length) dashboardPostMediaCache.delete(key);
+            return result;
         }
 
         function rankRedditVideo(url) {
@@ -1811,13 +1827,13 @@
             return ranked[0] || '';
         }
 
-        async function resolveVideoByTweetIdForDashboard(tweetId) {
-            const media = await fetchRedditPostMediaBundle(tweetId);
+        async function resolveVideoByTweetIdForDashboard(tweetId, options = {}) {
+            const media = await fetchRedditPostMediaBundle(tweetId, options);
             return pickBestRedditVideo(media?.videos || []);
         }
 
-        async function resolveImagesByPostIdForDashboard(postId) {
-            const media = await fetchRedditPostMediaBundle(postId);
+        async function resolveImagesByPostIdForDashboard(postId, options = {}) {
+            const media = await fetchRedditPostMediaBundle(postId, options);
             return Array.isArray(media?.images) ? media.images : [];
         }
 
@@ -1826,7 +1842,7 @@
             if (isLikelyMp4ForDownload(t.video)) return String(t.video).replace(/&amp;/g, '&');
             const postId = extractRedditPostId(t.postId || t.tweetId || t.url || t.permalink);
             if (postId) {
-                const resolved = await resolveVideoByTweetIdForDashboard(postId);
+                const resolved = await resolveVideoByTweetIdForDashboard(postId, { timeoutMs: 6500 });
                 if (resolved) return resolved;
             }
             if (typeof t.video === 'string' && /^https?:/i.test(t.video) && /\.mp4(\?|$)/i.test(t.video) && !/\.m3u8(\?|$)/i.test(t.video)) {
@@ -1915,10 +1931,14 @@
             return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
-        function computeZipParallelism() {
+        function computeZipParallelism(taskCount = 0) {
             const hw = Number(navigator.hardwareConcurrency) || 4;
             let workers = Math.max(2, Math.min(8, hw - 1));
             if (settings.enableZipThrottle) workers = Math.max(1, Math.min(workers, 3));
+            const total = Math.max(0, Number(taskCount) || 0);
+            if (total > 800) workers = Math.min(workers, 2);
+            else if (total > 350) workers = Math.min(workers, 3);
+            else if (total > 180) workers = Math.min(workers, 4);
             return workers;
         }
 
@@ -2591,6 +2611,14 @@
                     arr.sort(function(a,b){ return rankVideoUrl(b)-rankVideoUrl(a); });
                     return arr[0] || '';
                 }
+                function fetchJsonWithTimeout(url, timeoutMs){
+                    var ms=Math.max(1200, Number(timeoutMs)||7000);
+                    var ac=new AbortController();
+                    var timer=setTimeout(function(){ try{ ac.abort(); }catch(e){} }, ms);
+                    return fetch(url,{method:'GET',credentials:'omit',cache:'no-store',signal:ac.signal})
+                        .then(function(r){ if(!r.ok) throw new Error('http_'+r.status); return r.json(); })
+                        .finally(function(){ clearTimeout(timer); });
+                }
                 function resolveVideoByTweetId(tweetId){
                     var pid=extractRedditPostId(tweetId);
                     if(!pid) return Promise.resolve('');
@@ -2602,8 +2630,7 @@
                     function tryNext(){
                         if(idx>=endpoints.length) return Promise.resolve('');
                         var url=endpoints[idx++];
-                        return fetch(url,{method:'GET',credentials:'omit',cache:'no-store'})
-                            .then(function(r){ if(!r.ok) throw new Error('http_'+r.status); return r.json(); })
+                        return fetchJsonWithTimeout(url,7000)
                             .then(function(payload){
                                 var children=[];
                                 if(Array.isArray(payload)){
@@ -2635,8 +2662,7 @@
                     function tryNext(){
                         if(idx>=endpoints.length) return Promise.resolve([]);
                         var url=endpoints[idx++];
-                        return fetch(url,{method:'GET',credentials:'omit',cache:'no-store'})
-                            .then(function(r){ if(!r.ok) throw new Error('http_'+r.status); return r.json(); })
+                        return fetchJsonWithTimeout(url,7000)
                             .then(function(payload){
                                 var children=[];
                                 if(Array.isArray(payload)){
@@ -3663,7 +3689,7 @@
 
             const exportPro = settings.enableExportPro;
             const throttle = settings.enableZipThrottle ? settings.zipThrottleMs : 0;
-            const parallelism = computeZipParallelism();
+            let parallelism = 2;
             const metadata = [];
             const tasks = [];
             let imgIdx = 1;
@@ -3673,15 +3699,30 @@
             let cacheUpdated = false;
             const startTs = Date.now();
             let lastUiPaint = 0;
+            const prepProgressBase = 12;
+            const mediaResolveDeadline = Date.now() + 18000;
 
-            for (const tweet of data) {
+            for (let dataIdx = 0; dataIdx < data.length; dataIdx++) {
+                const tweet = data[dataIdx];
                 const postId = extractRedditPostId(tweet.postId || tweet.tweetId || '');
                 let imageList = [];
                 if (Array.isArray(tweet.imgs) && tweet.imgs.length) imageList.push(...tweet.imgs);
                 else if (tweet.img) imageList.push(tweet.img);
 
-                if (postId) {
-                    const resolvedImgs = await resolveImagesByPostIdForDashboard(postId).catch(() => []);
+                if (status) {
+                    status.innerText = settings.language === 'en'
+                        ? `Preparing media list... (${dataIdx + 1}/${data.length})`
+                        : `Medienliste wird vorbereitet... (${dataIdx + 1}/${data.length})`;
+                }
+                if (etaLine) etaLine.innerText = tr('zipEtaCalculating');
+                if (progressBar) {
+                    const prepPct = (Math.min(data.length, dataIdx + 1) / Math.max(1, data.length)) * prepProgressBase;
+                    progressBar.style.width = `${prepPct.toFixed(2)}%`;
+                }
+
+                const shouldResolveImages = !!postId && imageList.length <= 1 && Date.now() < mediaResolveDeadline;
+                if (shouldResolveImages) {
+                    const resolvedImgs = await resolveImagesByPostIdForDashboard(postId, { timeoutMs: 5000 }).catch(() => []);
                     if (Array.isArray(resolvedImgs) && resolvedImgs.length) {
                         const merged = Array.from(new Set([...imageList, ...resolvedImgs].map((s) => normalizeTwitterImageUrl(s) || s).filter(Boolean)));
                         if (merged.length !== imageList.length) {
@@ -3701,13 +3742,20 @@
                 overlay.style.display = 'none';
                 return alert(tr('alertCacheEmpty'));
             }
+            parallelism = computeZipParallelism(total);
+            const mediaFetchOpts = total > 500
+                ? { attempts: 2, timeoutMs: 9000, baseDelayMs: 180 }
+                : total > 220
+                    ? { attempts: 2, timeoutMs: 11000, baseDelayMs: 220 }
+                    : { attempts: 3, timeoutMs: 14000, baseDelayMs: 260 };
 
             const paintProgress = (force = false, customEta = '') => {
                 const nowTs = Date.now();
                 if (!force && (nowTs - lastUiPaint) < 120 && processed < total) return;
                 lastUiPaint = nowTs;
                 const done = Math.min(processed, total);
-                const pct = Math.max(0, Math.min(100, (done / total) * 100));
+                const workPct = total > 0 ? (done / total) : 0;
+                const pct = Math.max(prepProgressBase, Math.min(100, prepProgressBase + (workPct * (100 - prepProgressBase))));
                 if (progressBar) progressBar.style.width = `${pct.toFixed(2)}%`;
                 if (status) status.innerText = tr('processingLabel')(done, total);
                 if (!etaLine) return;
@@ -3762,7 +3810,7 @@
                 try {
                     if (task.type === 'image') {
                         const src = normalizeTwitterImageUrl(task.src) || task.src;
-                        const blob = await fetchBlobWithRetry(src);
+                        const blob = await fetchBlobWithRetry(src, mediaFetchOpts);
                         if (blob) {
                             const saved = await putFile(task.tweet, 'image', src, blob, imgIdx++);
                             pushMeta(task.tweet, 'image', src, saved);
@@ -3775,7 +3823,7 @@
                                 task.tweet.video = bestVideo;
                                 cacheUpdated = true;
                             }
-                            const blob = await fetchBlobWithRetry(bestVideo);
+                            const blob = await fetchBlobWithRetry(bestVideo, mediaFetchOpts);
                             if (blob) {
                                 const saved = await putFile(task.tweet, 'video', bestVideo, blob, vidIdx++);
                                 pushMeta(task.tweet, 'video', bestVideo, saved);
