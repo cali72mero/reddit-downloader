@@ -1607,7 +1607,6 @@
                     if (!u.searchParams.get('format')) u.searchParams.set('format', 'pjpg');
                     if (!u.searchParams.get('auto')) u.searchParams.set('auto', 'webp');
                 }
-                u.searchParams.delete('s');
                 return u.toString();
             } catch {
                 return raw;
@@ -1640,6 +1639,19 @@
                 }
             } catch {}
             return Array.from(new Set(out.filter(Boolean)));
+        }
+
+        function isUnsignedPreviewRedditUrl(url) {
+            const raw = String(url || '').replace(/&amp;/g, '&').trim();
+            if (!raw || !/^https?:/i.test(raw)) return false;
+            try {
+                const u = new URL(raw);
+                const host = (u.hostname || '').toLowerCase();
+                const isPreviewHost = host.includes('preview.redd.it') || host.includes('external-preview.redd.it');
+                return isPreviewHost && !u.searchParams.get('s');
+            } catch {
+                return false;
+            }
         }
 
         function extractRedditPostId(value) {
@@ -2198,7 +2210,6 @@
                             if(!urlObj.searchParams.get('format')) urlObj.searchParams.set('format','pjpg');
                             if(!urlObj.searchParams.get('auto')) urlObj.searchParams.set('auto','webp');
                         }
-                        urlObj.searchParams.delete('s');
                         return urlObj.toString();
                     }catch(e){
                         return raw;
@@ -3720,7 +3731,9 @@
                     progressBar.style.width = `${prepPct.toFixed(2)}%`;
                 }
 
-                const shouldResolveImages = !!postId && imageList.length <= 1 && Date.now() < mediaResolveDeadline;
+                const hasUnsignedPreview = imageList.some((src) => isUnsignedPreviewRedditUrl(src));
+                const shouldResolveImages = !!postId
+                    && (hasUnsignedPreview || (imageList.length <= 1 && Date.now() < mediaResolveDeadline));
                 if (shouldResolveImages) {
                     const resolvedImgs = await resolveImagesByPostIdForDashboard(postId, { timeoutMs: 5000 }).catch(() => []);
                     if (Array.isArray(resolvedImgs) && resolvedImgs.length) {
@@ -3748,6 +3761,7 @@
                 : total > 220
                     ? { attempts: 2, timeoutMs: 11000, baseDelayMs: 220 }
                     : { attempts: 3, timeoutMs: 14000, baseDelayMs: 260 };
+            const imageCandidateLimit = total > 500 ? 2 : total > 220 ? 3 : 5;
 
             const paintProgress = (force = false, customEta = '') => {
                 const nowTs = Date.now();
@@ -3810,10 +3824,19 @@
                 try {
                     if (task.type === 'image') {
                         const src = normalizeTwitterImageUrl(task.src) || task.src;
-                        const blob = await fetchBlobWithRetry(src, mediaFetchOpts);
+                        const candidates = buildTwitterImageCandidates(src).slice(0, imageCandidateLimit);
+                        let blob = null;
+                        let finalSrc = src;
+                        for (const candidate of candidates) {
+                            blob = await fetchBlobWithRetry(candidate, mediaFetchOpts);
+                            if (blob) {
+                                finalSrc = candidate;
+                                break;
+                            }
+                        }
                         if (blob) {
-                            const saved = await putFile(task.tweet, 'image', src, blob, imgIdx++);
-                            pushMeta(task.tweet, 'image', src, saved);
+                            const saved = await putFile(task.tweet, 'image', finalSrc, blob, imgIdx++);
+                            pushMeta(task.tweet, 'image', finalSrc, saved);
                             isSuccess = true;
                         }
                     } else {
