@@ -683,11 +683,28 @@
         let deletedPostKeys = new Set();
         const viewFilterState = { user: 'all' };
         const dashboardImageResolveBusy = new Set();
+        let runtimeMediaRequestSeq = 0;
+        const runtimeMediaRequestPending = new Map();
+        const runtimeMediaBridgeState = { supported: null, timeouts: 0 };
 
         function clamp(n, min, max, fallback) {
             const x = Number(n);
             if (!Number.isFinite(x)) return fallback;
             return Math.min(max, Math.max(min, x));
+        }
+
+        function decodeBase64ToArrayBuffer(base64) {
+            try {
+                const clean = String(base64 || '').trim();
+                if (!clean) return null;
+                const binary = atob(clean);
+                const len = binary.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+                return bytes.buffer;
+            } catch {
+                return null;
+            }
         }
 
         function sanitizeSettings(raw) {
@@ -1959,6 +1976,7 @@
                 attempts: 4,
                 timeoutMs: 24000,
                 baseDelayMs: 280,
+                credentials: 'omit',
                 ...options
             };
 
@@ -1966,7 +1984,13 @@
                 const ac = new AbortController();
                 const timer = setTimeout(() => ac.abort(), opts.timeoutMs);
                 try {
-                    const res = await fetch(url, { method: 'GET', cache: 'no-store', credentials: 'omit', signal: ac.signal });
+                    const res = await fetch(url, {
+                        method: 'GET',
+                        cache: 'no-store',
+                        credentials: opts.credentials || 'omit',
+                        referrerPolicy: 'no-referrer',
+                        signal: ac.signal
+                    });
                     if (!res.ok) throw new Error(`http_${res.status}`);
                     return await res.blob();
                 } finally {
@@ -2938,6 +2962,52 @@
                     emitStatus(true);
                     if(showAlert) alert(TT.started);
                 }
+                function sendMediaFetchResult(target, requestId, payload){
+                    if(!target || !requestId) return;
+                    var msg=Object.assign({type:'CT_FETCH_MEDIA_RESULT',requestId:String(requestId)},payload||{});
+                    if(msg && msg.buffer instanceof ArrayBuffer){
+                        try{
+                            target.postMessage(msg,'*',[msg.buffer]);
+                            return;
+                        }catch(e){}
+                    }
+                    try{ target.postMessage(msg,'*'); }catch(e){}
+                }
+                function fetchMediaForBridge(url, timeoutMs, includeCreds){
+                    var src=String(url||'').trim();
+                    if(!src || !/^https?:/i.test(src)) return Promise.reject(new Error('invalid_url'));
+                    var ms=Math.max(2000,Number(timeoutMs)||12000);
+                    var ac=new AbortController();
+                    var timer=setTimeout(function(){ try{ac.abort();}catch(e){} },ms);
+                    var attempts=[
+                        {credentials: includeCreds ? 'include' : 'omit', referrerPolicy:'no-referrer'},
+                        {credentials:'omit', referrerPolicy:'no-referrer'},
+                        {credentials:'omit', referrerPolicy:'origin'}
+                    ];
+                    function tryFetch(i){
+                        if(i>=attempts.length) return Promise.reject(new Error('bridge_fetch_failed'));
+                        var cfg=attempts[i]||{};
+                        return fetch(src,{
+                            method:'GET',
+                            cache:'no-store',
+                            mode:'cors',
+                            credentials:cfg.credentials||'omit',
+                            referrerPolicy:cfg.referrerPolicy||'no-referrer',
+                            signal:ac.signal
+                        }).then(function(r){
+                            if(!r.ok) throw new Error('http_'+r.status);
+                            return Promise.all([r.arrayBuffer(), r.headers.get('content-type')||'application/octet-stream']);
+                        }).then(function(parts){
+                            var buf=parts[0];
+                            if(!buf || !buf.byteLength) throw new Error('empty_body');
+                            return {buffer:buf,mime:String(parts[1]||'application/octet-stream')};
+                        }).catch(function(err){
+                            if(i+1<attempts.length) return tryFetch(i+1);
+                            throw err;
+                        });
+                    }
+                    return tryFetch(0).finally(function(){ clearTimeout(timer); });
+                }
                 function onRuntimeMessage(e){
                     if(!e || !e.data) return;
                     if(e.data.type==='CMD_CLEAR_CACHE'){
@@ -2962,6 +3032,25 @@
                         scanCount=0;
                         upd('▶️');
                         emitStatus(true);
+                    } else if(e.data.type==='CMD_FETCH_MEDIA'){
+                        var reqId=String(e.data.requestId||'');
+                        var reqUrl=String(e.data.url||'');
+                        var target=e.source;
+                        if(!reqId || !reqUrl){
+                            sendMediaFetchResult(target, reqId || 'missing', {ok:false,error:'invalid_request'});
+                            return;
+                        }
+                        fetchMediaForBridge(reqUrl, Number(e.data.timeoutMs)||12000, e.data.includeCredentials!==false)
+                            .then(function(result){
+                                sendMediaFetchResult(target, reqId, {
+                                    ok:true,
+                                    mime:result && result.mime ? result.mime : 'application/octet-stream',
+                                    buffer:result ? result.buffer : null
+                                });
+                            })
+                            .catch(function(err){
+                                sendMediaFetchResult(target, reqId, {ok:false,error:String((err&&err.message)||'fetch_failed')});
+                            });
                     }
                 }
                 function bindRuntimeEvents(){
@@ -3246,13 +3335,19 @@
             document.getElementById('bookmarkletBtn').href = `javascript:${source.replace(/\n\s+/g, ' ')}`;
         }
 
-        function postRuntimeCommand(payload, options = {}) {
-            const opts = { silent: false, ...options };
+        function getRuntimeTargetWindow() {
             let target = null;
             try { target = window.opener; } catch { target = null; }
             let closed = true;
             try { closed = !target || !!target.closed; } catch { closed = true; }
-            if (!target || typeof target.postMessage !== 'function' || closed) {
+            if (!target || typeof target.postMessage !== 'function' || closed) return null;
+            return target;
+        }
+
+        function postRuntimeCommand(payload, options = {}) {
+            const opts = { silent: false, ...options };
+            const target = getRuntimeTargetWindow();
+            if (!target) {
                 if (!opts.silent) alert(tr('runtimeNoOpener'));
                 return false;
             }
@@ -3263,6 +3358,75 @@
                 if (!opts.silent) alert(tr('runtimeNoOpener'));
                 return false;
             }
+        }
+
+        function resolveRuntimeMediaFetchResult(payload) {
+            const p = payload || {};
+            const requestId = String(p.requestId || '');
+            if (!requestId) return false;
+            const pending = runtimeMediaRequestPending.get(requestId);
+            if (!pending) return false;
+            runtimeMediaRequestPending.delete(requestId);
+            try { clearTimeout(pending.timer); } catch {}
+            runtimeMediaBridgeState.supported = true;
+            runtimeMediaBridgeState.timeouts = 0;
+
+            if (!p.ok) {
+                pending.resolve(null);
+                return true;
+            }
+
+            let buffer = null;
+            if (p.buffer instanceof ArrayBuffer) buffer = p.buffer;
+            else if (ArrayBuffer.isView(p.buffer)) buffer = p.buffer.buffer;
+            else if (typeof p.base64 === 'string' && p.base64) buffer = decodeBase64ToArrayBuffer(p.base64);
+
+            if (!buffer || !buffer.byteLength) {
+                pending.resolve(null);
+                return true;
+            }
+
+            const mime = typeof p.mime === 'string' && p.mime ? p.mime : 'application/octet-stream';
+            pending.resolve(new Blob([buffer], { type: mime }));
+            return true;
+        }
+
+        function fetchBlobViaRuntime(url, options = {}) {
+            const src = String(url || '').trim();
+            if (!src || !/^https?:/i.test(src)) return Promise.resolve(null);
+            if (runtimeMediaBridgeState.supported === false) return Promise.resolve(null);
+            return new Promise((resolve) => {
+                const requestId = `rm_${Date.now()}_${++runtimeMediaRequestSeq}`;
+                const timeoutMs = Math.max(2500, Number(options.timeoutMs) || 12000);
+                const timer = setTimeout(() => {
+                    runtimeMediaBridgeState.timeouts += 1;
+                    if (runtimeMediaBridgeState.timeouts >= 2) runtimeMediaBridgeState.supported = false;
+                    runtimeMediaRequestPending.delete(requestId);
+                    resolve(null);
+                }, timeoutMs + 1200);
+                runtimeMediaRequestPending.set(requestId, { resolve, timer });
+                const ok = postRuntimeCommand({
+                    type: 'CMD_FETCH_MEDIA',
+                    requestId,
+                    url: src,
+                    timeoutMs,
+                    includeCredentials: true
+                }, { silent: true });
+                if (!ok) {
+                    runtimeMediaBridgeState.supported = false;
+                    clearTimeout(timer);
+                    runtimeMediaRequestPending.delete(requestId);
+                    resolve(null);
+                }
+            });
+        }
+
+        function clearPendingRuntimeMediaRequests() {
+            runtimeMediaRequestPending.forEach((pending) => {
+                try { clearTimeout(pending.timer); } catch {}
+                try { pending.resolve(null); } catch {}
+            });
+            runtimeMediaRequestPending.clear();
         }
 
         function applyRuntimeConfigLive(options = {}) {
@@ -3700,6 +3864,7 @@
 
             const exportPro = settings.enableExportPro;
             const throttle = settings.enableZipThrottle ? settings.zipThrottleMs : 0;
+            const runtimeBridgeAvailable = !!getRuntimeTargetWindow();
             let parallelism = 2;
             const metadata = [];
             const tasks = [];
@@ -3762,6 +3927,12 @@
                     ? { attempts: 2, timeoutMs: 11000, baseDelayMs: 220 }
                     : { attempts: 3, timeoutMs: 14000, baseDelayMs: 260 };
             const imageCandidateLimit = total > 500 ? 2 : total > 220 ? 3 : 5;
+            const runtimeFetchTimeout = Math.max(3500, Math.min(7000, Number(mediaFetchOpts.timeoutMs || 11000) - 2500));
+            if (!runtimeBridgeAvailable && etaLine) {
+                etaLine.innerText = settings.language === 'en'
+                    ? 'No active Reddit runtime bridge detected. Open dashboard via View for best ZIP success.'
+                    : 'Keine aktive Reddit-Runtime-Bridge erkannt. Dashboard über View öffnen für beste ZIP-Erfolge.';
+            }
 
             const paintProgress = (force = false, customEta = '') => {
                 const nowTs = Date.now();
@@ -3834,6 +4005,15 @@
                                 break;
                             }
                         }
+                        if (!blob) {
+                            for (const candidate of candidates) {
+                                blob = await fetchBlobViaRuntime(candidate, { timeoutMs: runtimeFetchTimeout });
+                                if (blob) {
+                                    finalSrc = candidate;
+                                    break;
+                                }
+                            }
+                        }
                         if (blob) {
                             const saved = await putFile(task.tweet, 'image', finalSrc, blob, imgIdx++);
                             pushMeta(task.tweet, 'image', finalSrc, saved);
@@ -3846,9 +4026,12 @@
                                 task.tweet.video = bestVideo;
                                 cacheUpdated = true;
                             }
-                            const blob = await fetchBlobWithRetry(bestVideo, mediaFetchOpts);
-                            if (blob) {
-                                const saved = await putFile(task.tweet, 'video', bestVideo, blob, vidIdx++);
+                            let videoBlob = await fetchBlobWithRetry(bestVideo, mediaFetchOpts);
+                            if (!videoBlob) {
+                                videoBlob = await fetchBlobViaRuntime(bestVideo, { timeoutMs: runtimeFetchTimeout });
+                            }
+                            if (videoBlob) {
+                                const saved = await putFile(task.tweet, 'video', bestVideo, videoBlob, vidIdx++);
                                 pushMeta(task.tweet, 'video', bestVideo, saved);
                                 isSuccess = true;
                             }
@@ -3856,6 +4039,10 @@
                     }
                 } catch {}
                 if (!isSuccess) failed++;
+                const observed = processed + 1;
+                if (!runtimeBridgeAvailable && observed >= 18 && failed >= observed) {
+                    throw new Error('all_failed_no_bridge');
+                }
                 if (throttle > 0) await sleep(throttle);
                 processed++;
                 paintProgress();
@@ -3914,12 +4101,19 @@
                 const okCount = Math.max(0, total - failed);
                 if (failed > 0) alert(tr('alertZipPartial')(okCount, failed));
                 else alert(tr('alertZipSuccess'));
-            } catch {
+            } catch (err) {
                 monitorState.status = settings.language === 'en' ? 'ZIP export error' : 'ZIP Export Fehler';
                 updateMonitorView();
-                alert(settings.language === 'en'
-                    ? 'ZIP export failed. Try a smaller batch or disable ZIP throttle.'
-                    : 'ZIP-Export fehlgeschlagen. Versuche kleinere Batches oder deaktiviere ZIP-Throttle.');
+                const reason = String(err && err.message || '');
+                if (reason === 'all_failed_no_bridge') {
+                    alert(settings.language === 'en'
+                        ? 'ZIP stopped: All first downloads failed and no Reddit runtime bridge is connected. Start bookmarklet on reddit.com and open dashboard via View.'
+                        : 'ZIP gestoppt: Die ersten Downloads sind alle fehlgeschlagen und es ist keine Reddit-Runtime-Bridge verbunden. Starte das Bookmarklet auf reddit.com und öffne das Dashboard über View.');
+                } else {
+                    alert(settings.language === 'en'
+                        ? 'ZIP export failed. Try a smaller batch or disable ZIP throttle.'
+                        : 'ZIP-Export fehlgeschlagen. Versuche kleinere Batches oder deaktiviere ZIP-Throttle.');
+                }
             } finally {
                 if (progressBar) progressBar.style.width = '0%';
                 if (etaLine) etaLine.innerText = tr('zipEtaCalculating');
@@ -4253,6 +4447,11 @@
         window.addEventListener('message', (event) => {
             if (!(event && event.data && event.data.type)) return;
 
+            if (event.data.type === 'CT_FETCH_MEDIA_RESULT') {
+                resolveRuntimeMediaFetchResult(event.data);
+                return;
+            }
+
             if (event.data.type === 'ct_status') {
                 if (!settings.enableLiveMonitor) return;
                 const st = event.data.data || {};
@@ -4321,9 +4520,11 @@
         }
 
         window.addEventListener('pagehide', () => {
+            clearPendingRuntimeMediaRequests();
             queuePersistRuntimeCache({ immediate: true }).catch(() => {});
         });
         window.addEventListener('beforeunload', () => {
+            clearPendingRuntimeMediaRequests();
             queuePersistRuntimeCache({ immediate: true }).catch(() => {});
         });
 
